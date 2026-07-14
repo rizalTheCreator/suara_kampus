@@ -1,0 +1,115 @@
+{% extends "base.html" %}
+
+{% block title %}{{ report.title }} - Suara Kampus ITG{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="bi bi-file-earmark-text me-2"></i>Detail Laporan</h1>
+        <p>{{ report.title }}</p>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <div class="col-lg-8">
+            <!-- Report Info -->
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <span class="badge bg-light text-dark border mb-2">{{ report.category.name }}</span>
+                            <h4 class="fw-bold">{{ report.title }}</h4>
+                        </div>
+                        {% if report.status == 'Diajukan' %}
+                            <span class="status-badge badge-diajukan">{{ report.status }}</span>
+                        {% elif report.status == 'Diproses' %}
+                            <span class="status-badge badge-diproses">{{ report.status }}</span>
+                        {% elif report.status == 'Selesai' %}
+                            <span class="status-badge badge-selesai">{{ report.status }}</span>
+                        {% else %}
+                            <span class="status-badge badge-ditolak">{{ report.status }}</span>
+                        {% endif %}
+                    </div>
+                    <p class="text-muted">{{ report.description }}</p>
+                    <hr>
+                    <div class="row">
+                        <div class="col-md-6">
+                            <small class="text-muted d-block">Pelapor</small>
+                            <span class="fw-semibold">{{ report.user.full_name }}</span>
+                        </div>
+                        <div class="col-md-6">
+                            <small class="text-muted d-block">Tanggal Pengajuan</small>
+                            <span class="fw-semibold">{{ report.created_at.strftime('%d %B %Y, %H:%M') }}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Timeline -->
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
+                <div class="card-header bg-white border-0 pt-4 px-4">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-clock-history me-2 text-primary"></i>Riwayat Status</h5>
+                </div>
+                <div class="card-body px-4 pb-4">
+                    <div class="timeline">
+                        {% for log in report.report_logs %}
+                        <div class="timeline-item {% if loop.first %}active{% endif %}">
+                            <h4>{{ log.status_to }}</h4>
+                            <p>{{ log.note or 'Status diperbarui' }}</p>
+                            <small class="text-muted">
+                                <i class="bi bi-person me-1"></i>{{ log.changed_by_user.full_name }} &bull; {{ log.created_at.strftime('%d/%m/%Y %H:%M') }}
+                            </small>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <!-- Admin Actions -->
+            {% if current_user.role == 'admin' %}
+            <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
+                <div class="card-header bg-white border-0 pt-4 px-4">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-gear me-2 text-primary"></i>Kelola Laporan</h5>
+                </div>
+                <div class="card-body px-4 pb-4">
+                    <form method="POST" action="{{ url_for('update_report_status', report_id=report.id) }}">
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Ubah Status</label>
+                            <select name="status" class="form-control" required>
+                                <option value="Diajukan" {% if report.status == 'Diajukan' %}selected{% endif %}>Diajukan</option>
+                                <option value="Diproses" {% if report.status == 'Diproses' %}selected{% endif %}>Diproses</option>
+                                <option value="Selesai" {% if report.status == 'Selesai' %}selected{% endif %}>Selesai</option>
+                                <option value="Ditolak" {% if report.status == 'Ditolak' %}selected{% endif %}>Ditolak</option>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold">Catatan / Tanggapan</label>
+                            <textarea name="note" class="form-control" rows="3" placeholder="Tambahkan catatan untuk mahasiswa..."></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary-custom w-100">
+                            <i class="bi bi-check-lg me-2"></i>Simpan Perubahan
+                        </button>
+                    </form>
+                </div>
+            </div>
+            {% endif %}
+
+            <!-- Chat Preview -->
+            <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+                <div class="card-header bg-white border-0 pt-4 px-4">
+                    <h5 class="fw-bold mb-0"><i class="bi bi-chat-dots me-2 text-primary"></i>Chat</h5>
+                </div>
+                <div class="card-body px-4 pb-4">
+                    <div class="text-center py-4">
+                        <i class="bi bi-chat-left-text text-muted" style="font-size: 2rem;"></i>
+                        <p class="text-muted small mt-2">Fitur chat real-time akan segera hadir.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

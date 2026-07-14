@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk — Suara Kampus ITG</title>
+    <meta name="description" content="Login ke platform Suara Kampus Institut Teknologi Garut">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { background: linear-gradient(135deg, #EFF6FF 0%, #F8FAFC 50%, #F5F3FF 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .auth-card { width: 100%; max-width: 460px; background: var(--surface); border-radius: var(--radius-2xl); box-shadow: var(--shadow-xl); padding: 40px; animation: scaleIn 0.35s ease-out; }
+        .tab-line { display: flex; background: var(--bg-secondary); border-radius: var(--radius-md); padding: 4px; gap: 4px; margin-bottom: 28px; }
+        .tab-line-btn { flex: 1; padding: 9px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; color: var(--text-secondary); transition: all 0.2s; text-align: center; cursor: pointer; }
+        .tab-line-btn.active { background: var(--surface); color: var(--text-primary); font-weight: 600; box-shadow: var(--shadow-xs); }
+        .eye-toggle { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); cursor: pointer; color: var(--text-tertiary); transition: color 0.15s; padding: 4px; }
+        .eye-toggle:hover { color: var(--text-secondary); }
+    </style>
+</head>
+<body>
+
+<div class="auth-card">
+    <!-- Logo -->
+    <div style="text-align:center;margin-bottom:28px">
+        <a href="index.html" style="display:inline-flex;flex-direction:column;align-items:center;gap:12px">
+            <div style="width:52px;height:52px;background:var(--primary);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-glow)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            </div>
+            <div>
+                <div style="font-size:22px;font-weight:800;color:var(--text-primary)">Suara<span style="color:var(--primary)">Kampus</span></div>
+                <div style="font-size:12px;color:var(--text-tertiary)">Institut Teknologi Garut</div>
+            </div>
+        </a>
+    </div>
+
+    <h1 style="font-size:20px;font-weight:700;text-align:center;margin-bottom:4px">Selamat Datang Kembali</h1>
+    <p style="font-size:13px;color:var(--text-secondary);text-align:center;margin-bottom:24px">Masuk ke akun Anda</p>
+
+    <!-- Role Tabs -->
+    <div class="tab-line">
+        <button class="tab-line-btn active" id="tab-mahasiswa" onclick="switchTab('mahasiswa')">
+            <span>🎓</span> Mahasiswa
+        </button>
+        <button class="tab-line-btn" id="tab-admin" onclick="switchTab('admin')">
+            <span>⚙️</span> Administrator
+        </button>
+    </div>
+
+    <!-- Login Form -->
+    <form id="login-form" onsubmit="handleLogin(event)">
+        <input type="hidden" id="login-role" value="mahasiswa">
+
+        <div class="form-group">
+            <label class="form-label" for="login-username" id="username-label">NIM / Username</label>
+            <div class="form-input-icon">
+                <span class="icon-left">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </span>
+                <input type="text" id="login-username" class="form-input" placeholder="Masukkan NIM atau username" required autocomplete="username">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="form-label" for="login-password">Password</label>
+            <div style="position:relative">
+                <div class="form-input-icon">
+                    <span class="icon-left">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    </span>
+                    <input type="password" id="login-password" class="form-input" placeholder="Masukkan password" required autocomplete="current-password">
+                </div>
+                <span class="eye-toggle" onclick="togglePassword('login-password', this)">
+                    <svg id="eye-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </span>
+            </div>
+        </div>
+
+        <!-- Lupa Password -->
+        <div style="text-align:right;margin-top:-12px;margin-bottom:20px">
+            <button type="button" onclick="showForgotModal()" style="font-size:13px;color:var(--primary);font-weight:500;cursor:pointer;background:none;border:none">Lupa Password?</button>
+        </div>
+
+        <!-- Admin hint -->
+        <div id="admin-hint" style="display:none;background:var(--warning-light);border:1px solid var(--warning);border-radius:var(--radius-md);padding:12px;margin-bottom:20px;font-size:13px;color:#92400E">
+            <strong>Default Admin:</strong> Username: <code>admin</code> | Password: <code>itg@garut</code><br>
+            <span style="font-size:12px;color:var(--text-secondary)">Anda akan diminta ganti password saat pertama login.</span>
+        </div>
+
+        <!-- Error message -->
+        <div id="login-error" style="display:none;background:var(--error-light);border:1px solid var(--error);border-radius:var(--radius-md);padding:12px;margin-bottom:20px;font-size:13px;color:var(--error)"></div>
+
+        <button type="submit" class="btn btn-primary ripple" id="login-btn" style="width:100%;justify-content:center;padding:13px">
+            <span id="login-btn-text">Masuk</span>
+        </button>
+    </form>
+
+    <p style="text-align:center;font-size:13px;color:var(--text-secondary);margin-top:20px" id="register-link">
+        Belum punya akun? <a href="register.html" style="color:var(--primary);font-weight:600">Daftar sekarang</a>
+    </p>
+</div>
+
+<!-- Forgot Password Modal -->
+<div id="modal-forgot" class="modal-overlay">
+    <div class="modal-box" style="max-width:400px">
+        <div class="modal-header">
+            <div>
+                <h3 style="font-size:18px;font-weight:700">Lupa Password</h3>
+                <p style="font-size:13px;color:var(--text-secondary);margin-top:4px">Hubungi administrator untuk reset password.</p>
+            </div>
+            <button class="btn btn-ghost btn-icon" data-close-modal="modal-forgot">✕</button>
+        </div>
+        <div class="modal-body">
+            <div style="background:var(--primary-light);border-radius:var(--radius-md);padding:16px;display:flex;gap:12px">
+                <div style="width:40px;height:40px;border-radius:50%;background:var(--primary);display:flex;align-items:center;justify-content:center;color:white;flex-shrink:0">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                </div>
+                <div>
+                    <div style="font-weight:600;font-size:14px;color:var(--text-primary)">Administrator Suara Kampus</div>
+                    <div style="font-size:13px;color:var(--text-secondary);margin-top:2px">admin@itg.ac.id</div>
+                    <div style="font-size:13px;color:var(--text-secondary)">Kampus Institut Teknologi Garut</div>
+                </div>
+            </div>
+            <p style="font-size:13px;color:var(--text-secondary);margin-top:16px;line-height:1.6">Sampaikan NIM dan nama lengkap Anda kepada administrator untuk proses reset password.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" data-close-modal="modal-forgot">Mengerti</button>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+    // Mock Users
+    const USERS = [
+        { username: '2407043', password: 'password123', role: 'mahasiswa', first_login: false, profile: { nama: 'Nurhuda', nim: '2407043', email: '2407043@itg.ac.id', prodi: 'Sistem Informasi', foto: null } },
+        { username: 'admin', password: 'itg@garut', role: 'admin', first_login: true, profile: { nama: 'Administrator', email: 'admin@itg.ac.id' } }
+    ];
+
+    let currentRole = 'mahasiswa';
+
+    function switchTab(role) {
+        currentRole = role;
+        document.getElementById('login-role').value = role;
+        document.getElementById('tab-mahasiswa').classList.toggle('active', role === 'mahasiswa');
+        document.getElementById('tab-admin').classList.toggle('active', role === 'admin');
+        document.getElementById('admin-hint').style.display = role === 'admin' ? 'block' : 'none';
+        document.getElementById('register-link').style.display = role === 'admin' ? 'none' : 'block';
+        document.getElementById('username-label').textContent = role === 'admin' ? 'Username Admin' : 'NIM / Username';
+        document.getElementById('login-username').placeholder = role === 'admin' ? 'Masukkan username admin' : 'Masukkan NIM';
+        document.getElementById('login-error').style.display = 'none';
+    }
+
+    function togglePassword(id, btn) {
+        const input = document.getElementById(id);
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        btn.innerHTML = isPassword
+            ? '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line></svg>'
+            : '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>';
+    }
+
+    function showForgotModal() {
+        const modal = document.getElementById('modal-forgot');
+        modal.classList.add('active');
+        requestAnimationFrame(() => modal.classList.add('visible'));
+    }
+
+    document.addEventListener('click', e => {
+        if (e.target.classList.contains('modal-overlay')) closeModal(e.target.id);
+        if (e.target.dataset.closeModal) closeModal(e.target.dataset.closeModal);
+    });
+    function closeModal(id) {
+        const m = document.getElementById(id);
+        if (!m) return;
+        m.classList.remove('visible');
+        setTimeout(() => m.classList.remove('active'), 250);
+    }
+
+    async function handleLogin(e) {
+        e.preventDefault();
+        const username = document.getElementById('login-username').value.trim();
+        const password = document.getElementById('login-password').value;
+        const role = document.getElementById('login-role').value;
+        const errEl = document.getElementById('login-error');
+        const btn = document.getElementById('login-btn');
+        const btnText = document.getElementById('login-btn-text');
+
+        errEl.style.display = 'none';
+        btn.disabled = true;
+        btnText.innerHTML = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="animation:spin 1s linear infinite"><polyline points="23 4 23 10 17 10"></polyline><path d="M20.49 15a9 9 0 1 1-.43-5.62"></path></svg> Memproses...';
+
+        // Simulate API delay
+        await new Promise(r => setTimeout(r, 800));
+
+        const user = USERS.find(u => u.username === username && u.password === password && u.role === role);
+        if (!user) {
+            errEl.textContent = 'Username/NIM atau password salah. Periksa kembali data Anda.';
+            errEl.style.display = 'block';
+            btn.disabled = false;
+            btnText.textContent = 'Masuk';
+            return;
+        }
+
+        localStorage.setItem('sk_token', 'mock_token_' + Date.now());
+        localStorage.setItem('sk_user', JSON.stringify({ ...user.profile, id: user.username === 'admin' ? 2 : 1, role: user.role, first_login: user.first_login }));
+
+        if (user.role === 'admin' && user.first_login) {
+            window.location.href = 'profile.html?first_login=1';
+        } else if (user.role === 'admin') {
+            window.location.href = 'admin-dashboard.html';
+        } else {
+            window.location.href = 'dashboard.html';
+        }
+    }
+
+    // If already logged in, redirect
+    const existing = JSON.parse(localStorage.getItem('sk_user') || 'null');
+    if (existing && localStorage.getItem('sk_token')) {
+        window.location.href = existing.role === 'admin' ? 'admin-dashboard.html' : 'dashboard.html';
+    }
+
+    // Ripple on button
+    document.getElementById('login-btn').addEventListener('click', function(e) {
+        const rect = this.getBoundingClientRect();
+        const ripple = document.createElement('span');
+        const size = Math.max(rect.width, rect.height);
+        ripple.className = 'ripple-effect';
+        ripple.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX - rect.left - size/2}px;top:${e.clientY - rect.top - size/2}px;`;
+        this.appendChild(ripple);
+        ripple.addEventListener('animationend', () => ripple.remove());
+    });
+</script>
+<style>
+@keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</body>
+</html>

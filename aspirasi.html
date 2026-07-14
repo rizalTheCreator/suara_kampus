@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aspirasi — Suara Kampus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo" onclick="window.location.href='dashboard.html'">
+        <div class="logo-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></div>
+        <span class="logo-text">Suara<span>Kampus</span></span>
+    </div>
+    <nav class="sidebar-nav">
+        <a class="nav-item" href="dashboard.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>Dashboard</a>
+        <a class="nav-item" href="laporan.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>Laporan Saya</a>
+        <a class="nav-item" href="laporan.html?tab=buat"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Buat Laporan</a>
+        <a class="nav-item active" href="aspirasi.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>Aspirasi</a>
+    </nav>
+    <div class="sidebar-footer">
+        <div class="sidebar-user" onclick="window.location.href='profile.html'">
+            <div style="width:40px;height:40px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px">N</div>
+            <div><div class="sidebar-user-name" id="sidebar-name">Nurhuda</div><div class="sidebar-user-role">Mahasiswa</div></div>
+        </div>
+    </div>
+</aside>
+
+<div class="content-area">
+    <header class="topbar">
+        <div style="display:flex;align-items:center;gap:12px">
+            <button class="mobile-hamburger" id="hamburger-btn"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+            <span class="topbar-title" id="page-title">Aspirasi</span>
+        </div>
+        <div class="topbar-actions">
+            <a href="profile.html" class="btn btn-ghost btn-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></a>
+        </div>
+    </header>
+
+    <main class="page-content">
+
+        <!-- LIST VIEW -->
+        <div id="view-list">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+                <h2 style="font-size:20px;font-weight:700">Aspirasi Mahasiswa</h2>
+                <button onclick="showView('buat')" class="btn btn-primary btn-sm" id="btn-buat-aspirasi">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Usulkan Aspirasi
+                </button>
+            </div>
+
+            <div class="filter-bar">
+                <button class="filter-chip active" onclick="filterAsp('semua', this)" id="chip-semua">Semua</button>
+                <button class="filter-chip" onclick="filterAsp('likes', this)" id="chip-terpopuler">Terpopuler</button>
+                <button class="filter-chip" onclick="filterAsp('newest', this)" id="chip-terbaru">Terbaru</button>
+                <button class="filter-chip" onclick="filterAsp('status:baru', this)" id="chip-baru">Baru</button>
+                <button class="filter-chip" onclick="filterAsp('status:dipertimbangkan', this)" id="chip-dipertimbangkan">Dipertimbangkan</button>
+                <button class="filter-chip" onclick="filterAsp('status:diimplementasikan', this)" id="chip-diimplementasikan">Diimplementasikan</button>
+            </div>
+
+            <div class="grid-3" id="aspirasi-grid">
+                <!-- Injected by JS -->
+            </div>
+        </div>
+
+        <!-- BUAT VIEW -->
+        <div id="view-buat" style="display:none">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+                <button class="btn btn-ghost btn-icon" onclick="showView('list')"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+                <h2 style="font-size:20px;font-weight:700">Usulkan Aspirasi</h2>
+            </div>
+            <div class="card" style="max-width:720px">
+                <form id="form-aspirasi" onsubmit="submitAspirasi(event)">
+                    <!-- Kategori -->
+                    <div class="form-group">
+                        <label class="form-label">Kategori <span style="color:var(--error)">*</span></label>
+                        <div class="grid-3" style="gap:10px">
+                            <div class="category-card" onclick="selectAspKat(this,'infrastruktur')"><div class="cat-icon" style="background:#EFF6FF;color:#2563EB"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg></div><div class="cat-label">Infrastruktur</div></div>
+                            <div class="category-card" onclick="selectAspKat(this,'fasilitas')"><div class="cat-icon" style="background:#F5F3FF;color:#8B5CF6"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"></rect></svg></div><div class="cat-label">Fasilitas</div></div>
+                            <div class="category-card" onclick="selectAspKat(this,'akademik')"><div class="cat-icon" style="background:#ECFDF5;color:#10B981"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path></svg></div><div class="cat-label">Akademik</div></div>
+                            <div class="category-card" onclick="selectAspKat(this,'keamanan')"><div class="cat-icon" style="background:#FEF2F2;color:#EF4444"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div><div class="cat-label">Keamanan</div></div>
+                            <div class="category-card" onclick="selectAspKat(this,'lingkungan')"><div class="cat-icon" style="background:#ECFEFF;color:#06B6D4"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle></svg></div><div class="cat-label">Lingkungan</div></div>
+                            <div class="category-card" onclick="selectAspKat(this,'lainnya')"><div class="cat-icon" style="background:#F8FAFC;color:#94A3B8"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg></div><div class="cat-label">Lainnya</div></div>
+                        </div>
+                        <input type="hidden" id="asp-kategori">
+                        <span id="err-asp-kat" style="font-size:12px;color:var(--error);display:none;margin-top:8px">Pilih kategori</span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="asp-judul">Judul Aspirasi <span style="color:var(--error)">*</span></label>
+                        <input type="text" id="asp-judul" class="form-input" placeholder="Tulis judul yang jelas dan ringkas..." required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="asp-deskripsi">Deskripsi <span style="color:var(--error)">*</span></label>
+                        <textarea id="asp-deskripsi" class="form-input" rows="4" placeholder="Jelaskan aspirasi Anda secara rinci, mengapa ini penting, dan apa manfaatnya..." required style="min-height:120px"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="asp-tags">Tag/Label</label>
+                        <input type="text" id="asp-tags" class="form-input" placeholder="Contoh: #wifi #perpustakaan #fasilitas (pisahkan dengan spasi)">
+                        <span class="form-hint">Tag membantu mahasiswa lain menemukan aspirasi Anda</span>
+                    </div>
+                    <!-- Gambar -->
+                    <div class="form-group">
+                        <label class="form-label">Gambar Pendukung <span style="color:var(--error)">*</span></label>
+                        <div class="upload-area" id="asp-upload-area" onclick="document.getElementById('asp-foto').click()">
+                            <div id="asp-upload-placeholder">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 10px"><rect x="3" y="3" width="18" height="18" rx="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                <div style="font-size:14px;font-weight:600;color:var(--text-secondary)">Klik untuk unggah gambar</div>
+                                <div style="font-size:12px;color:var(--text-tertiary);margin-top:4px">Gambar situasi yang mendukung aspirasi Anda · Wajib</div>
+                            </div>
+                        </div>
+                        <div class="upload-preview" id="asp-upload-preview">
+                            <img id="asp-preview-img" src="" alt="Preview">
+                            <button type="button" onclick="clearAspPhoto()" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.6);color:white;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer">✕</button>
+                        </div>
+                        <input type="file" id="asp-foto" accept="image/*" style="display:none" onchange="handleAspFile(this)">
+                        <span id="err-asp-foto" style="font-size:12px;color:var(--error);display:none;margin-top:4px">Gambar wajib dilampirkan</span>
+                    </div>
+                    <!-- Anonim -->
+                    <div class="form-group">
+                        <div style="display:flex;align-items:center;justify-content:space-between;background:var(--bg-secondary);border-radius:var(--radius-md);padding:14px 16px">
+                            <div><div style="font-size:14px;font-weight:600">Ajukan Secara Anonim</div><div style="font-size:12px;color:var(--text-secondary);margin-top:2px">Nama Anda tidak akan ditampilkan</div></div>
+                            <label class="toggle-switch"><input type="checkbox" id="asp-anonim"><span class="toggle-slider"></span></label>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:10px;justify-content:flex-end">
+                        <button type="button" onclick="showView('list')" class="btn btn-secondary">Batal</button>
+                        <button type="submit" class="btn btn-primary ripple" id="btn-submit-asp">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                            Kirim Aspirasi
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+<script>
+const user = JSON.parse(localStorage.getItem('sk_user') || 'null');
+if (!user || !localStorage.getItem('sk_token')) window.location.href = 'login.html';
+if (user) document.getElementById('sidebar-name').textContent = user.nama || 'Nurhuda';
+
+const ASPIRASI_DATA = [
+    { id: 1, kategori: 'Fasilitas', judul: 'Penambahan Hotspot WiFi di Area Perpustakaan', deskripsi: 'Sinyal WiFi di perpustakaan sangat lemah dan tidak stabil.', gambar: 'https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=400', tags: ['#wifi','#perpustakaan','#internet'], status: 'dipertimbangkan', likes: 48, dislikes: 3, user_reaction: null },
+    { id: 2, kategori: 'Akademik', judul: 'Perpanjangan Jam Buka Laboratorium Komputer', deskripsi: 'Lab komputer hanya buka sampai 17.00 padahal banyak mahasiswa butuh malam hari.', gambar: 'https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400', tags: ['#laboratorium','#komputer','#akademik'], status: 'ditinjau', likes: 35, dislikes: 2, user_reaction: null },
+    { id: 3, kategori: 'Infrastruktur', judul: 'Perbaikan Kursi dan Meja di Ruang Kuliah', deskripsi: 'Banyak kursi dan meja yang rusak mengganggu kenyamanan belajar.', gambar: 'https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=400', tags: ['#meja','#kursi','#ruang-kuliah'], status: 'baru', likes: 22, dislikes: 1, user_reaction: null },
+    { id: 4, kategori: 'Keamanan', judul: 'Penambahan CCTV di Area Parkir Motor', deskripsi: 'Area parkir motor sering terjadi kehilangan barang karena tidak ada CCTV.', gambar: 'https://images.unsplash.com/photo-1555448248-2571daf6344b?w=400', tags: ['#cctv','#parkir','#keamanan'], status: 'diimplementasikan', likes: 61, dislikes: 0, user_reaction: null },
+];
+
+const statusBadge = (s) => ({
+    baru: '<span class="badge badge-neutral">Baru</span>',
+    ditinjau: '<span class="badge badge-primary">Ditinjau</span>',
+    dipertimbangkan: '<span class="badge badge-warning">Dipertimbangkan</span>',
+    diimplementasikan: '<span class="badge badge-success">Diimplementasikan</span>',
+}[s] || '<span class="badge badge-neutral">'+s+'</span>');
+
+function showView(v) {
+    ['list','buat'].forEach(n => { const el = document.getElementById('view-' + n); if(el) el.style.display = n===v?'block':'none'; });
+    document.getElementById('page-title').textContent = v === 'buat' ? 'Usulkan Aspirasi' : 'Aspirasi';
+}
+
+function renderAspirasi(data) {
+    const grid = document.getElementById('aspirasi-grid');
+    if (!data.length) { grid.innerHTML = '<div style="grid-column:1/-1"><div class="empty-state"><div class="empty-icon">💡</div><h3>Belum Ada Aspirasi</h3><p>Jadilah yang pertama mengusulkan aspirasi untuk kemajuan kampus.</p></div></div>'; return; }
+    grid.innerHTML = data.map(a => `
+        <div class="aspiration-card" id="asp-${a.id}">
+            <div class="asp-image">
+                <img src="${a.gambar}" alt="${a.judul}" loading="lazy">
+            </div>
+            <div class="asp-body">
+                <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+                    ${statusBadge(a.status)}
+                    <span style="font-size:11px;color:var(--text-tertiary)">${a.kategori}</span>
+                </div>
+                <h3 style="font-size:15px;font-weight:700;margin-bottom:6px;line-height:1.4">${a.judul}</h3>
+                <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${a.deskripsi}</p>
+                <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
+                    ${a.tags.map(t => `<span style="font-size:11px;color:var(--primary);background:var(--primary-light);padding:2px 8px;border-radius:var(--radius-full)">${t}</span>`).join('')}
+                </div>
+            </div>
+            <div class="asp-actions">
+                <div style="display:flex;gap:6px">
+                    <button class="like-btn ${a.user_reaction==='like'?'active':''}" onclick="react(${a.id},'like')" id="like-btn-${a.id}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3H14z"></path><path d="M7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"></path></svg>
+                        <span id="like-count-${a.id}">${a.likes}</span>
+                    </button>
+                    <button class="dislike-btn ${a.user_reaction==='dislike'?'active':''}" onclick="react(${a.id},'dislike')" id="dislike-btn-${a.id}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 15v4a3 3 0 0 0 3 3l4-9V2H5.72a2 2 0 0 0-2 1.7l-1.38 9a2 2 0 0 0 2 2.3H10z"></path><path d="M17 2h2.67A2.31 2.31 0 0 1 22 4v7a2.31 2.31 0 0 1-2.33 2H17"></path></svg>
+                        <span id="dislike-count-${a.id}">${a.dislikes}</span>
+                    </button>
+                </div>
+                <button onclick="toggleBookmark(${a.id})" class="btn btn-ghost btn-icon btn-sm" id="bookmark-btn-${a.id}" title="Simpan">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>
+                </button>
+            </div>
+        </div>`).join('');
+}
+
+function react(id, type) {
+    const a = ASPIRASI_DATA.find(x => x.id === id);
+    if (!a) return;
+    const prev = a.user_reaction;
+    if (prev === 'like') a.likes--;
+    if (prev === 'dislike') a.dislikes--;
+    a.user_reaction = prev === type ? null : type;
+    if (a.user_reaction === 'like') a.likes++;
+    if (a.user_reaction === 'dislike') a.dislikes++;
+    document.getElementById('like-count-' + id).textContent = a.likes;
+    document.getElementById('dislike-count-' + id).textContent = a.dislikes;
+    document.getElementById('like-btn-' + id).classList.toggle('active', a.user_reaction === 'like');
+    document.getElementById('dislike-btn-' + id).classList.toggle('active', a.user_reaction === 'dislike');
+}
+function toggleBookmark(id) {
+    const btn = document.getElementById('bookmark-btn-' + id);
+    btn.innerHTML = btn.innerHTML.includes('fill="none"')
+        ? '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="var(--primary)" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>'
+        : '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path></svg>';
+    showToast('Aspirasi ' + (btn.innerHTML.includes('"var(--primary)"') ? 'disimpan' : 'dihapus dari simpan'), 'info');
+}
+
+function filterAsp(f, btn) {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    let data = [...ASPIRASI_DATA];
+    if (f === 'likes') data.sort((a,b) => b.likes - a.likes);
+    else if (f === 'newest') data.sort((a,b) => b.id - a.id);
+    else if (f.startsWith('status:')) data = data.filter(a => a.status === f.split(':')[1]);
+    renderAspirasi(data);
+}
+
+// Form
+function selectAspKat(el, val) {
+    document.querySelectorAll('#view-buat .category-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('asp-kategori').value = val;
+    document.getElementById('err-asp-kat').style.display = 'none';
+}
+function handleAspFile(input) {
+    const file = input.files[0]; if (!file) return;
+    const reader = new FileReader();
+    reader.onload = e => {
+        document.getElementById('asp-preview-img').src = e.target.result;
+        document.getElementById('asp-upload-preview').classList.add('has-file');
+        document.getElementById('asp-upload-placeholder').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+}
+function clearAspPhoto() {
+    document.getElementById('asp-foto').value = '';
+    document.getElementById('asp-preview-img').src = '';
+    document.getElementById('asp-upload-preview').classList.remove('has-file');
+    document.getElementById('asp-upload-placeholder').style.display = 'block';
+}
+
+async function submitAspirasi(e) {
+    e.preventDefault();
+    const kat = document.getElementById('asp-kategori').value;
+    const foto = document.getElementById('asp-foto').files[0];
+    let ok = true;
+    if (!kat) { document.getElementById('err-asp-kat').style.display = 'block'; ok = false; }
+    if (!foto) { document.getElementById('err-asp-foto').style.display = 'block'; ok = false; }
+    if (!ok) return;
+    const btn = document.getElementById('btn-submit-asp');
+    btn.disabled = true; btn.textContent = 'Mengirim...';
+    await new Promise(r => setTimeout(r, 1000));
+    showToast('Aspirasi berhasil dikirim! Terima kasih atas partisipasi Anda.', 'success');
+    btn.disabled = false; btn.textContent = 'Kirim Aspirasi';
+    e.target.reset(); clearAspPhoto();
+    document.querySelectorAll('#view-buat .category-card').forEach(c => c.classList.remove('selected'));
+    setTimeout(() => showView('list'), 1500);
+}
+
+// Init
+const tabParam = new URLSearchParams(location.search).get('tab');
+if (tabParam === 'buat') showView('buat');
+renderAspirasi(ASPIRASI_DATA);
+
+// Mobile
+document.getElementById('hamburger-btn').addEventListener('click', () => { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebar-overlay').classList.add('active'); });
+document.getElementById('sidebar-overlay').addEventListener('click', () => { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('active'); });
+
+function showToast(msg, type='info') {
+    const el = document.createElement('div'); el.className = 'toast';
+    el.innerHTML = `<span>${{success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'}[type]}</span><span class="toast-msg">${msg}</span><button class="toast-close" onclick="this.closest('.toast').remove()">✕</button>`;
+    document.getElementById('toast-container').appendChild(el);
+    setTimeout(() => { el.classList.add('removing'); setTimeout(() => el.remove(), 300); }, 3500);
+}
+</script>
+</body>
+</html>

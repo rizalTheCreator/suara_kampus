@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar Akun — Suara Kampus ITG</title>
+    <meta name="description" content="Daftar akun mahasiswa untuk platform Suara Kampus Institut Teknologi Garut">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        body { background: linear-gradient(135deg, #EFF6FF 0%, #F8FAFC 50%, #F5F3FF 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .auth-card { width: 100%; max-width: 520px; background: var(--surface); border-radius: var(--radius-2xl); box-shadow: var(--shadow-xl); padding: 40px; animation: scaleIn 0.35s ease-out; }
+
+        /* Custom select */
+        .custom-select-wrap { position: relative; }
+        .custom-select-wrap::after {
+            content: ''; position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+            width: 0; height: 0; border-left: 5px solid transparent; border-right: 5px solid transparent;
+            border-top: 6px solid var(--text-tertiary); pointer-events: none;
+        }
+        select.form-input { appearance: none; -webkit-appearance: none; cursor: pointer; padding-right: 36px; }
+        select.form-input:focus { border-color: var(--primary); }
+    </style>
+</head>
+<body>
+
+<div class="auth-card">
+    <!-- Back to login -->
+    <a href="login.html" style="display:inline-flex;align-items:center;gap:6px;font-size:13px;color:var(--text-secondary);margin-bottom:20px;transition:color 0.15s" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--text-secondary)'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+        Kembali ke Login
+    </a>
+
+    <!-- Logo -->
+    <div style="text-align:center;margin-bottom:28px">
+        <div style="display:inline-flex;align-items:center;gap:10px">
+            <div style="width:44px;height:44px;background:var(--primary);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-glow)">
+                <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+            </div>
+            <span style="font-size:22px;font-weight:800;color:var(--text-primary)">Suara<span style="color:var(--primary)">Kampus</span></span>
+        </div>
+    </div>
+
+    <h1 style="font-size:22px;font-weight:700;margin-bottom:4px">Daftar Akun Mahasiswa</h1>
+    <p style="font-size:13px;color:var(--text-secondary);margin-bottom:28px">Institut Teknologi Garut</p>
+
+    <form id="register-form" onsubmit="handleRegister(event)" novalidate>
+
+        <!-- Nama -->
+        <div class="form-group">
+            <label class="form-label" for="reg-nama">Nama Lengkap <span style="color:var(--error)">*</span></label>
+            <div class="form-input-icon">
+                <span class="icon-left"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></span>
+                <input type="text" id="reg-nama" class="form-input" placeholder="Masukkan nama lengkap" required>
+            </div>
+            <span class="form-error" id="err-nama">Nama tidak boleh kosong</span>
+        </div>
+
+        <!-- NIM -->
+        <div class="form-group">
+            <label class="form-label" for="reg-nim">NIM <span style="color:var(--error)">*</span></label>
+            <div class="form-input-icon">
+                <span class="icon-left"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg></span>
+                <input type="text" id="reg-nim" class="form-input" placeholder="Contoh: 2407043" required maxlength="10" pattern="[0-9]+" oninput="updateEmail(this.value)">
+            </div>
+            <span class="form-error" id="err-nim">NIM harus berupa angka (7 digit)</span>
+        </div>
+
+        <!-- Email (auto-generated) -->
+        <div class="form-group">
+            <label class="form-label">Email Kampus <span style="color:var(--error)">*</span></label>
+            <div class="email-compound" id="email-compound">
+                <input type="text" id="reg-nim-email" placeholder="NIM" readonly
+                    style="max-width:130px;background:#E2E8F0;color:var(--text-secondary);cursor:not-allowed">
+                <div class="email-domain">@itg.ac.id</div>
+            </div>
+            <span class="form-hint" id="email-preview" style="color:var(--text-tertiary);font-size:12px;margin-top:4px">Email akan otomatis dibuat dari NIM</span>
+        </div>
+
+        <!-- Program Studi -->
+        <div class="form-group">
+            <label class="form-label" for="reg-prodi">Program Studi <span style="color:var(--error)">*</span></label>
+            <div class="custom-select-wrap">
+                <select id="reg-prodi" class="form-input" required>
+                    <option value="" disabled selected>-- Pilih Program Studi --</option>
+                    <option value="Sistem Informasi">Sistem Informasi</option>
+                    <option value="Teknik Informatika">Teknik Informatika</option>
+                    <option value="Teknik Sipil">Teknik Sipil</option>
+                    <option value="Arsitektur">Arsitektur</option>
+                    <option value="Teknik Industri">Teknik Industri</option>
+                </select>
+            </div>
+            <span class="form-error" id="err-prodi">Pilih program studi</span>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+            <label class="form-label" for="reg-password">Password <span style="color:var(--error)">*</span></label>
+            <div style="position:relative">
+                <div class="form-input-icon">
+                    <span class="icon-left"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg></span>
+                    <input type="password" id="reg-password" class="form-input" placeholder="Minimal 8 karakter" required minlength="8" oninput="checkPasswordStrength(this.value)">
+                </div>
+                <span onclick="togglePwd('reg-password', this)" style="position:absolute;right:12px;top:50%;transform:translateY(-50%);cursor:pointer;color:var(--text-tertiary)">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                </span>
+            </div>
+            <!-- Password strength -->
+            <div style="margin-top:8px;display:flex;gap:4px;height:4px">
+                <div id="ps-1" style="flex:1;border-radius:2px;background:var(--border);transition:background 0.3s"></div>
+                <div id="ps-2" style="flex:1;border-radius:2px;background:var(--border);transition:background 0.3s"></div>
+                <div id="ps-3" style="flex:1;border-radius:2px;background:var(--border);transition:background 0.3s"></div>
+                <div id="ps-4" style="flex:1;border-radius:2px;background:var(--border);transition:background 0.3s"></div>
+            </div>
+            <div id="ps-label" style="font-size:11px;margin-top:4px;color:var(--text-tertiary)"></div>
+            <span class="form-error" id="err-password">Password minimal 8 karakter</span>
+        </div>
+
+        <!-- Konfirmasi Password -->
+        <div class="form-group">
+            <label class="form-label" for="reg-confirm">Konfirmasi Password <span style="color:var(--error)">*</span></label>
+            <div class="form-input-icon">
+                <span class="icon-left"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"></path></svg></span>
+                <input type="password" id="reg-confirm" class="form-input" placeholder="Ulangi password" required>
+            </div>
+            <span class="form-error" id="err-confirm">Password tidak cocok</span>
+        </div>
+
+        <!-- Error global -->
+        <div id="reg-error" style="display:none;background:var(--error-light);border:1px solid var(--error);border-radius:var(--radius-md);padding:12px;margin-bottom:16px;font-size:13px;color:var(--error)"></div>
+
+        <button type="submit" class="btn btn-primary ripple" id="reg-btn" style="width:100%;justify-content:center;padding:13px">
+            <span id="reg-btn-text">Daftar Sekarang</span>
+        </button>
+    </form>
+
+    <p style="text-align:center;font-size:13px;color:var(--text-secondary);margin-top:20px">
+        Sudah punya akun? <a href="login.html" style="color:var(--primary);font-weight:600">Masuk di sini</a>
+    </p>
+</div>
+
+<script>
+    function updateEmail(nim) {
+        const emailInput = document.getElementById('reg-nim-email');
+        const hint = document.getElementById('email-preview');
+        emailInput.value = nim;
+        if (nim) {
+            hint.textContent = `Email: ${nim}@itg.ac.id`;
+            hint.style.color = 'var(--primary)';
+        } else {
+            hint.textContent = 'Email akan otomatis dibuat dari NIM';
+            hint.style.color = 'var(--text-tertiary)';
+        }
+    }
+
+    function togglePwd(id, btn) {
+        const input = document.getElementById(id);
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+    }
+
+    function checkPasswordStrength(password) {
+        const bars = [1,2,3,4].map(i => document.getElementById(`ps-${i}`));
+        const label = document.getElementById('ps-label');
+        bars.forEach(b => b.style.background = 'var(--border)');
+        if (!password) { label.textContent = ''; return; }
+        let score = 0;
+        if (password.length >= 8) score++;
+        if (/[A-Z]/.test(password)) score++;
+        if (/[0-9]/.test(password)) score++;
+        if (/[^A-Za-z0-9]/.test(password)) score++;
+        const colors = ['var(--error)', 'var(--warning)', 'var(--primary)', 'var(--success)'];
+        const labels = ['Sangat Lemah', 'Lemah', 'Sedang', 'Kuat'];
+        for (let i = 0; i < score; i++) bars[i].style.background = colors[score - 1];
+        label.textContent = labels[score - 1] || '';
+        label.style.color = colors[score - 1] || 'var(--text-tertiary)';
+    }
+
+    function validateNIM(nim) {
+        return /^\d{7}$/.test(nim); // Exactly 7 digits
+    }
+
+    function showError(id, show) {
+        const el = document.getElementById(id);
+        if (el) el.style.display = show ? 'block' : 'none';
+    }
+    function setInputError(id, hasError) {
+        const el = document.getElementById(id);
+        if (el) { if (hasError) el.classList.add('error'); else el.classList.remove('error'); }
+    }
+
+    async function handleRegister(e) {
+        e.preventDefault();
+        const nama = document.getElementById('reg-nama').value.trim();
+        const nim = document.getElementById('reg-nim').value.trim();
+        const prodi = document.getElementById('reg-prodi').value;
+        const password = document.getElementById('reg-password').value;
+        const confirm = document.getElementById('reg-confirm').value;
+        const errEl = document.getElementById('reg-error');
+        errEl.style.display = 'none';
+
+        let hasError = false;
+
+        // Validate nama
+        if (!nama) { setInputError('reg-nama', true); showError('err-nama', true); hasError = true; }
+        else { setInputError('reg-nama', false); showError('err-nama', false); }
+
+        // Validate NIM — must be 7 digits
+        if (!validateNIM(nim)) {
+            setInputError('reg-nim', true);
+            document.getElementById('err-nim').textContent = nim
+                ? (!/^\d+$/.test(nim) ? 'NIM hanya boleh berupa angka' : 'NIM harus tepat 7 digit')
+                : 'NIM tidak boleh kosong';
+            showError('err-nim', true);
+            hasError = true;
+        } else { setInputError('reg-nim', false); showError('err-nim', false); }
+
+        // Validate prodi
+        if (!prodi) { setInputError('reg-prodi', true); showError('err-prodi', true); hasError = true; }
+        else { setInputError('reg-prodi', false); showError('err-prodi', false); }
+
+        // Validate password
+        if (password.length < 8) { setInputError('reg-password', true); showError('err-password', true); hasError = true; }
+        else { setInputError('reg-password', false); showError('err-password', false); }
+
+        // Validate confirm
+        if (password !== confirm) { setInputError('reg-confirm', true); showError('err-confirm', true); hasError = true; }
+        else { setInputError('reg-confirm', false); showError('err-confirm', false); }
+
+        if (hasError) return;
+
+        const btn = document.getElementById('reg-btn');
+        const btnText = document.getElementById('reg-btn-text');
+        btn.disabled = true;
+        btnText.textContent = 'Mendaftarkan...';
+
+        await new Promise(r => setTimeout(r, 1000));
+
+        // Mock success
+        localStorage.setItem('sk_register_success', '1');
+        window.location.href = 'login.html?registered=1';
+    }
+
+    // Success toast if redirected from register
+    if (new URLSearchParams(location.search).get('registered') === '1') {
+        // Show in login page; handled there
+    }
+
+    // Ripple
+    document.getElementById('reg-btn').addEventListener('click', function(e) {
+        const rect = this.getBoundingClientRect();
+        const ripple = document.createElement('span');
+        const size = Math.max(rect.width, rect.height);
+        ripple.className = 'ripple-effect';
+        ripple.style.cssText = `width:${size}px;height:${size}px;left:${e.clientX-rect.left-size/2}px;top:${e.clientY-rect.top-size/2}px;`;
+        this.appendChild(ripple);
+        ripple.addEventListener('animationend', () => ripple.remove());
+    });
+</script>
+</body>
+</html>

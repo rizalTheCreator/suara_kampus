@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Admin — Suara Kampus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo" onclick="window.location.href='admin-dashboard.html'">
+        <div class="logo-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></div>
+        <span class="logo-text">Suara<span>Kampus</span></span>
+    </div>
+    <nav class="sidebar-nav">
+        <a class="nav-item active" href="admin-dashboard.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>Dashboard</a>
+        <a class="nav-item" href="admin-laporan.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>Kelola Laporan</a>
+        <a class="nav-item" href="admin-aspirasi.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>Kelola Aspirasi</a>
+        <a class="nav-item" href="admin-mahasiswa.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>Mahasiswa</a>
+    </nav>
+    <div class="sidebar-footer">
+        <div class="sidebar-user" onclick="window.location.href='profile.html'">
+            <div style="width:40px;height:40px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px">A</div>
+            <div><div class="sidebar-user-name">Administrator</div><div class="sidebar-user-role">Admin</div></div>
+        </div>
+    </div>
+</aside>
+
+<div class="content-area">
+    <header class="topbar">
+        <div style="display:flex;align-items:center;gap:12px">
+            <button class="mobile-hamburger" id="hamburger-btn"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+            <span class="topbar-title">Dashboard Admin</span>
+        </div>
+        <div class="topbar-actions">
+            <div style="position:relative">
+                <button class="btn btn-ghost btn-icon" id="notif-bell"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                    <span class="notif-dot" id="notif-badge">3</span>
+                </button>
+                <div class="notif-panel" id="notif-panel">
+                    <div class="notif-panel-header"><span style="font-size:15px;font-weight:700">Notifikasi</span><button class="btn btn-ghost btn-sm" onclick="markAdminNotifRead()">Tandai Dibaca</button></div>
+                    <div class="notif-panel-body" id="notif-panel-body"></div>
+                </div>
+            </div>
+            <a href="profile.html" class="btn btn-ghost btn-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></a>
+        </div>
+    </header>
+
+    <main class="page-content">
+        <!-- Welcome -->
+        <div style="background:linear-gradient(135deg, #1E40AF 0%, #7C3AED 100%);border-radius:var(--radius-xl);padding:24px 32px;color:white;margin-bottom:24px;position:relative;overflow:hidden" class="animate-fade-in">
+            <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.07)"></div>
+            <div style="position:relative;z-index:1">
+                <div style="font-size:13px;opacity:0.8">Panel Admin — Institut Teknologi Garut</div>
+                <div style="font-size:22px;font-weight:800;margin-top:4px">Selamat Datang, Administrator 👋</div>
+                <div style="font-size:13px;opacity:0.7;margin-top:2px" id="admin-date"></div>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px" id="stats-grid" class="animate-fade-in stagger-1">
+            <div class="stat-card"><div class="stat-icon" style="background:#EFF6FF"><span style="font-size:20px">👥</span></div><div><div class="stat-value">5</div><div class="stat-label">Total Mahasiswa</div></div></div>
+            <div class="stat-card"><div class="stat-icon" style="background:#FEF2F2"><span style="font-size:20px">📋</span></div><div><div class="stat-value">6</div><div class="stat-label">Total Laporan</div></div></div>
+            <div class="stat-card"><div class="stat-icon" style="background:#F5F3FF"><span style="font-size:20px">💡</span></div><div><div class="stat-value">4</div><div class="stat-label">Total Aspirasi</div></div></div>
+            <div class="stat-card"><div class="stat-icon" style="background:#FFFBEB"><span style="font-size:20px">⏳</span></div><div><div class="stat-value">2</div><div class="stat-label">Laporan Aktif</div></div></div>
+            <div class="stat-card"><div class="stat-icon" style="background:#ECFDF5"><span style="font-size:20px">✅</span></div><div><div class="stat-value">1</div><div class="stat-label">Laporan Selesai</div></div></div>
+            <div class="stat-card"><div class="stat-icon" style="background:#EFF6FF"><span style="font-size:20px">🔥</span></div><div><div class="stat-value">61</div><div class="stat-label">Like Aspirasi Terbanyak</div></div></div>
+        </div>
+
+        <!-- Charts -->
+        <div class="grid-2" style="margin-bottom:24px">
+            <div class="card animate-fade-in stagger-2">
+                <h3 style="font-size:15px;font-weight:700;margin-bottom:16px">Laporan per Kategori</h3>
+                <canvas id="chart-kategori" height="200"></canvas>
+            </div>
+            <div class="card animate-fade-in stagger-3">
+                <h3 style="font-size:15px;font-weight:700;margin-bottom:16px">Tren Bulanan</h3>
+                <canvas id="chart-tren" height="200"></canvas>
+            </div>
+        </div>
+
+        <!-- Quick Actions + Audit Log -->
+        <div class="grid-2" style="margin-bottom:24px">
+            <div class="card animate-fade-in stagger-4">
+                <h3 style="font-size:15px;font-weight:700;margin-bottom:16px">Aksi Cepat</h3>
+                <div style="display:flex;flex-direction:column;gap:10px">
+                    <a href="admin-laporan.html" class="btn btn-primary" style="justify-content:center">📋 Kelola Laporan</a>
+                    <a href="admin-aspirasi.html" class="btn btn-outline" style="justify-content:center">💡 Kelola Aspirasi</a>
+                    <a href="admin-mahasiswa.html" class="btn btn-ghost" style="justify-content:center">👥 Data Mahasiswa</a>
+                </div>
+            </div>
+            <div class="card animate-fade-in stagger-5">
+                <h3 style="font-size:15px;font-weight:700;margin-bottom:16px">Aktivitas Terbaru</h3>
+                <div class="timeline">
+                    <div class="timeline-item completed"><div class="timeline-dot"></div><div style="font-size:13px;font-weight:600">Laporan baru diterima</div><div style="font-size:12px;color:var(--text-secondary);margin-top:2px">Nurhuda · Toilet Kotor</div><div style="font-size:11px;color:var(--text-tertiary)">13 Jul 2026</div></div>
+                    <div class="timeline-item completed"><div class="timeline-dot"></div><div style="font-size:13px;font-weight:600">Status diperbarui → Diproses</div><div style="font-size:12px;color:var(--text-secondary);margin-top:2px">LPR-2026-0001</div><div style="font-size:11px;color:var(--text-tertiary)">12 Jul 2026</div></div>
+                    <div class="timeline-item completed"><div class="timeline-dot"></div><div style="font-size:13px;font-weight:600">Laporan diselesaikan</div><div style="font-size:12px;color:var(--text-secondary);margin-top:2px">LPR-2026-0002 · AC Ruang SI-101</div><div style="font-size:11px;color:var(--text-tertiary)">8 Jul 2026</div></div>
+                    <div class="timeline-item"><div class="timeline-dot"></div><div style="font-size:13px;font-weight:600">Mahasiswa baru mendaftar</div><div style="font-size:12px;color:var(--text-secondary);margin-top:2px">Nurhuda (2407043)</div><div style="font-size:11px;color:var(--text-tertiary)">1 Jul 2026</div></div>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+<script>
+    const user = JSON.parse(localStorage.getItem('sk_user') || 'null');
+    if (!user || !localStorage.getItem('sk_token')) window.location.href = 'login.html';
+    if (user && user.role !== 'admin') window.location.href = 'dashboard.html';
+    if (user && user.first_login) window.location.href = 'profile.html?first_login=1';
+
+    document.getElementById('admin-date').textContent = new Date().toLocaleDateString('id-ID', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+    // Charts
+    const ctxBar = document.getElementById('chart-kategori').getContext('2d');
+    new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+            labels: ['Infrastruktur', 'Fasilitas', 'Akademik', 'Keamanan', 'Kebersihan', 'Lainnya'],
+            datasets: [{ label: 'Laporan', data: [2, 2, 1, 1, 1, 0], backgroundColor: ['#2563EB','#8B5CF6','#10B981','#EF4444','#06B6D4','#94A3B8'], borderRadius: 8, borderWidth: 0 }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#F1F5F9' } }, x: { grid: { display: false } } } }
+    });
+
+    const ctxLine = document.getElementById('chart-tren').getContext('2d');
+    new Chart(ctxLine, {
+        type: 'line',
+        data: {
+            labels: ['Jan','Feb','Mar','Apr','Mei','Jun','Jul'],
+            datasets: [
+                { label: 'Laporan', data: [1,2,3,2,4,3,6], borderColor: '#2563EB', backgroundColor: 'rgba(37,99,235,0.1)', tension: 0.4, fill: true, borderWidth: 2, pointBackgroundColor: '#2563EB' },
+                { label: 'Aspirasi', data: [0,1,2,1,3,2,4], borderColor: '#8B5CF6', backgroundColor: 'rgba(139,92,246,0.1)', tension: 0.4, fill: true, borderWidth: 2, pointBackgroundColor: '#8B5CF6' }
+            ]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true, grid: { color: '#F1F5F9' } }, x: { grid: { display: false } } } }
+    });
+
+    // Mobile
+    document.getElementById('hamburger-btn').addEventListener('click', () => { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebar-overlay').classList.add('active'); });
+    document.getElementById('sidebar-overlay').addEventListener('click', () => { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('active'); });
+
+    // Notification
+    const ADMIN_NOTIFS = [
+        { icon:'📋', title:'Laporan Baru', message:'Nurhuda: "Toilet Lantai 3 Gedung A Kotor"', time:'13 Jul', unread: true },
+        { icon:'💬', title:'Chat Baru', message:'Nurhuda: "Terima kasih atas responnya"', time:'10 Jul', unread: true },
+        { icon:'💡', title:'Aspirasi Baru', message:'Nurhuda: "Perbaikan Kursi dan Meja"', time:'12 Jul', unread: true },
+    ];
+    const bell = document.getElementById('notif-bell');
+    const panel = document.getElementById('notif-panel');
+    const badge = document.getElementById('notif-badge');
+    bell.addEventListener('click', e => { e.stopPropagation(); panel.classList.toggle('active'); if (panel.classList.contains('active')) renderNotifs(); });
+    document.addEventListener('click', e => { if (!bell.contains(e.target) && !panel.contains(e.target)) panel.classList.remove('active'); });
+    function renderNotifs() {
+        const body = document.getElementById('notif-panel-body');
+        body.innerHTML = ADMIN_NOTIFS.map(n => `<div class="notif-item ${n.unread?'unread':''}" style="display:flex;gap:12px;padding:14px 20px;border-bottom:1px solid var(--border-light);cursor:pointer"><div style="width:40px;height:40px;border-radius:50%;background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">${n.icon}</div><div style="flex:1"><div style="font-size:13px;font-weight:600">${n.title}</div><div style="font-size:12px;color:var(--text-secondary);margin-top:2px">${n.message}</div><div style="font-size:11px;color:var(--text-tertiary);margin-top:4px">${n.time}</div></div></div>`).join('');
+    }
+    function markAdminNotifRead() { ADMIN_NOTIFS.forEach(n => n.unread = false); badge.style.display = 'none'; renderNotifs(); }
+</script>
+</body>
+</html>

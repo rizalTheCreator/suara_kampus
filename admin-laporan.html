@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelola Laporan — Admin Suara Kampus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo" onclick="window.location.href='admin-dashboard.html'">
+        <div class="logo-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></div>
+        <span class="logo-text">Suara<span>Kampus</span></span>
+    </div>
+    <nav class="sidebar-nav">
+        <a class="nav-item" href="admin-dashboard.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>Dashboard</a>
+        <a class="nav-item active" href="admin-laporan.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>Kelola Laporan</a>
+        <a class="nav-item" href="admin-aspirasi.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle></svg>Kelola Aspirasi</a>
+        <a class="nav-item" href="admin-mahasiswa.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>Mahasiswa</a>
+    </nav>
+    <div class="sidebar-footer">
+        <div class="sidebar-user" onclick="window.location.href='profile.html'">
+            <div style="width:40px;height:40px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:700">A</div>
+            <div><div class="sidebar-user-name">Administrator</div><div class="sidebar-user-role">Admin</div></div>
+        </div>
+    </div>
+</aside>
+
+<div class="content-area">
+    <header class="topbar">
+        <div style="display:flex;align-items:center;gap:12px">
+            <button class="mobile-hamburger" id="hamburger-btn"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+            <span class="topbar-title">Kelola Laporan</span>
+        </div>
+    </header>
+
+    <main class="page-content">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+            <h2 style="font-size:20px;font-weight:700">Manajemen Laporan</h2>
+            <div style="display:flex;gap:8px">
+                <input type="text" placeholder="Cari laporan..." id="search-laporan" class="form-input" style="width:220px;padding:8px 14px" oninput="filterLaporan()">
+            </div>
+        </div>
+
+        <div class="filter-bar">
+            <button class="filter-chip active" onclick="setFilter('semua',this)">Semua (6)</button>
+            <button class="filter-chip" onclick="setFilter('menunggu',this)">Menunggu (1)</button>
+            <button class="filter-chip" onclick="setFilter('diterima',this)">Diterima (0)</button>
+            <button class="filter-chip" onclick="setFilter('diproses',this)">Diproses (1)</button>
+            <button class="filter-chip" onclick="setFilter('selesai',this)">Selesai (1)</button>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:12px" id="laporan-list">
+            <!-- Injected -->
+        </div>
+    </main>
+</div>
+
+<!-- Detail Modal -->
+<div id="modal-detail" class="modal-overlay">
+    <div class="modal-box modal-lg">
+        <div class="modal-header" style="flex-direction:column;gap:12px;align-items:flex-start">
+            <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
+                <div>
+                    <h3 style="font-size:18px;font-weight:700" id="modal-judul">Detail Laporan</h3>
+                    <div id="modal-tiket" style="font-size:13px;color:var(--text-secondary);margin-top:2px"></div>
+                </div>
+                <button class="btn btn-ghost btn-icon" data-close-modal="modal-detail">✕</button>
+            </div>
+            <div id="modal-stepper-wrap" style="width:100%"></div>
+        </div>
+        <div class="modal-body">
+            <div id="modal-detail-info" style="display:flex;flex-direction:column;gap:8px;margin-bottom:20px"></div>
+            <!-- Update Status -->
+            <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:16px;margin-bottom:16px">
+                <h4 style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--text-secondary)">UPDATE STATUS</h4>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px">
+                    <select id="modal-status-select" class="form-input" style="flex:1;min-width:180px">
+                        <option value="diterima">Diterima</option>
+                        <option value="diproses">Diproses</option>
+                        <option value="pengerjaan">Pengerjaan</option>
+                        <option value="verifikasi">Verifikasi</option>
+                        <option value="selesai">Selesai</option>
+                    </select>
+                    <button onclick="updateStatus()" class="btn btn-primary">Update Status</button>
+                </div>
+                <textarea id="modal-komentar" class="form-input" rows="2" placeholder="Tambahkan komentar (opsional)..." style="min-height:64px"></textarea>
+            </div>
+            <!-- Chat preview -->
+            <h4 style="font-size:13px;font-weight:700;margin-bottom:10px;color:var(--text-secondary)">CHAT</h4>
+            <div id="admin-chat-container" class="chat-container" style="max-height:220px;margin-bottom:8px"></div>
+            <div style="display:flex;gap:8px">
+                <input type="text" id="admin-chat-input" placeholder="Kirim pesan ke mahasiswa..." class="form-input" style="flex:1" onkeydown="if(event.key==='Enter')sendAdminChat()">
+                <button onclick="sendAdminChat()" class="btn btn-primary" style="border-radius:50%;width:40px;height:40px;padding:0;flex-shrink:0"><svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg></button>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" data-close-modal="modal-detail">Tutup</button>
+            <button class="btn btn-success" id="btn-generate-pdf" onclick="generateAdminPDF()" style="display:none">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Generate PDF
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+<script>
+const user = JSON.parse(localStorage.getItem('sk_user') || 'null');
+if (!user || !localStorage.getItem('sk_token') || user.role !== 'admin') window.location.href = 'login.html';
+
+const LAPORAN_DATA = [
+    { id: 1, tiket: 'LPR-2026-0001', kategori: 'Infrastruktur', judul: 'Atap Gedung B Bocor Saat Hujan', deskripsi: 'Atap di lantai 2 Gedung B mengalami kebocoran parah. Air masuk ke ruang kelas dan merusak peralatan elektronik.', lokasi: 'Gedung B Lantai 2', mahasiswa: { nama: 'Nurhuda', nim: '2407043', prodi: 'Sistem Informasi' }, is_anonim: false, status: 'diproses', created_at: '2026-07-10T09:00:00Z', updated_at: '2026-07-12T14:00:00Z' },
+    { id: 2, tiket: 'LPR-2026-0002', kategori: 'Fasilitas', judul: 'AC Ruang Kelas SI-101 Tidak Berfungsi', deskripsi: 'AC di ruang kelas SI-101 sudah tidak berfungsi selama 2 minggu.', lokasi: 'Gedung SI, Ruang 101', mahasiswa: { nama: 'Nurhuda', nim: '2407043', prodi: 'Sistem Informasi' }, is_anonim: false, status: 'selesai', created_at: '2026-07-01T08:00:00Z', updated_at: '2026-07-08T16:00:00Z' },
+    { id: 3, tiket: 'LPR-2026-0003', kategori: 'Kebersihan', judul: 'Toilet Lantai 3 Gedung A Kotor dan Berbau', deskripsi: 'Kondisi toilet di lantai 3 Gedung A sangat memprihatinkan.', lokasi: 'Gedung A Lantai 3', mahasiswa: { nama: 'Nurhuda', nim: '2407043', prodi: 'Sistem Informasi' }, is_anonim: true, status: 'menunggu', created_at: '2026-07-13T11:00:00Z', updated_at: '2026-07-13T11:00:00Z' },
+    { id: 4, tiket: 'LPR-2026-0004', kategori: 'Keamanan', judul: 'Lampu Koridor Gedung C Mati', deskripsi: 'Beberapa lampu koridor di Gedung C sudah mati dan belum diganti.', lokasi: 'Gedung C', mahasiswa: { nama: 'Ahmad Fauzan', nim: '2307021', prodi: 'Teknik Informatika' }, is_anonim: false, status: 'menunggu', created_at: '2026-07-13T13:00:00Z', updated_at: '2026-07-13T13:00:00Z' },
+    { id: 5, tiket: 'LPR-2026-0005', kategori: 'Akademik', judul: 'Proyektor Rusak di Ruang 204', deskripsi: 'Proyektor di ruang 204 sering mati sendiri saat digunakan.', lokasi: 'Ruang 204', mahasiswa: { nama: 'Siti Rahayu', nim: '2207089', prodi: 'Arsitektur' }, is_anonim: false, status: 'diterima', created_at: '2026-07-12T08:00:00Z', updated_at: '2026-07-12T10:00:00Z' },
+    { id: 6, tiket: 'LPR-2026-0006', kategori: 'Fasilitas', judul: 'Wastafel di Kantin Bocor', deskripsi: 'Wastafel di area kantin bocor dan air menggenang di lantai.', lokasi: 'Kantin Kampus', mahasiswa: { nama: 'Budi Santoso', nim: '2407102', prodi: 'Teknik Sipil' }, is_anonim: false, status: 'pengerjaan', created_at: '2026-07-09T09:00:00Z', updated_at: '2026-07-11T14:00:00Z' },
+];
+
+const CHAT = {
+    1: [{ sender: 'admin', nama: 'Admin', message: 'Laporan sudah kami terima.', time: '10 Jul', is_read: true },{ sender: 'mahasiswa', nama: 'Nurhuda', message: 'Kondisinya cukup parah Pak.', time: '10 Jul', is_read: true }],
+    2: [{ sender: 'admin', nama: 'Admin', message: 'AC sudah diperbaiki dan berfungsi normal.', time: '8 Jul', is_read: true }],
+    3: [], 4: [], 5: [], 6: [],
+};
+
+let currentFilter = 'semua';
+let currentId = null;
+
+const statusMap = { menunggu: ['neutral','Menunggu'], diterima: ['primary','Diterima'], diproses: ['warning','Diproses'], pengerjaan: ['purple','Pengerjaan'], verifikasi: ['info','Verifikasi'], selesai: ['success','Selesai'] };
+
+function statusBadge(s) { const [c,l] = statusMap[s] || ['neutral',s]; return `<span class="badge badge-${c}">${l}</span>`; }
+
+function setFilter(f, btn) {
+    currentFilter = f;
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    renderList();
+}
+function filterLaporan() { renderList(); }
+
+function renderList() {
+    const q = document.getElementById('search-laporan').value.toLowerCase();
+    let data = LAPORAN_DATA.filter(l => {
+        const matchFilter = currentFilter === 'semua' || l.status === currentFilter;
+        const matchSearch = !q || l.judul.toLowerCase().includes(q) || l.tiket.includes(q) || l.mahasiswa.nama.toLowerCase().includes(q);
+        return matchFilter && matchSearch;
+    });
+    const container = document.getElementById('laporan-list');
+    if (!data.length) { container.innerHTML = '<div class="empty-state"><div class="empty-icon">📋</div><h3>Tidak Ada Laporan</h3><p>Tidak ada laporan yang sesuai dengan filter.</p></div>'; return; }
+    container.innerHTML = data.map(l => `
+        <div class="card card-hover" style="display:flex;align-items:center;gap:16px;padding:16px;cursor:pointer" onclick="openDetail(${l.id})" id="admin-lap-${l.id}">
+            <div style="width:44px;height:44px;border-radius:var(--radius-md);background:var(--primary-light);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">
+                ${{ infrastruktur:'🏗️', fasilitas:'🖥️', akademik:'📚', keamanan:'🔒', kebersihan:'✨', lainnya:'📋' }[l.kategori?.toLowerCase()] || '📋'}
+            </div>
+            <div style="flex:1;min-width:0">
+                <div style="font-size:15px;font-weight:600;color:var(--text-primary)">${l.judul}</div>
+                <div style="font-size:12px;color:var(--text-tertiary);margin-top:3px">${l.tiket} · ${l.mahasiswa.nama} · ${l.kategori}</div>
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px">
+                ${statusBadge(l.status)}
+                <span style="font-size:11px;color:var(--text-tertiary)">${new Date(l.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short'})}</span>
+            </div>
+        </div>`).join('');
+}
+
+function openDetail(id) {
+    const l = LAPORAN_DATA.find(x => x.id === id);
+    if (!l) return;
+    currentId = id;
+    document.getElementById('modal-judul').textContent = l.judul;
+    document.getElementById('modal-tiket').innerHTML = `${l.tiket} &bull; ${statusBadge(l.status)}`;
+
+    // Stepper
+    const steps = ['Diterima','Diproses','Pengerjaan','Verifikasi','Selesai'];
+    const stepKeys = ['diterima','diproses','pengerjaan','verifikasi','selesai'];
+    const idx = stepKeys.indexOf(l.status === 'menunggu' ? '' : l.status);
+    document.getElementById('modal-stepper-wrap').innerHTML = `<div class="stepper">` + steps.map((label, i) => {
+        return `${i > 0 ? `<div class="step-line ${i <= idx ? 'completed' : ''}"></div>` : ''}
+            <div class="step ${i <= idx ? 'completed' : ''} ${i === idx ? 'active' : ''}">
+                <div class="step-circle">${i <= idx ? '✓' : (i+1)}</div>
+                <div class="step-label">${label}</div>
+            </div>`;
+    }).join('') + '</div>';
+
+    // Info
+    document.getElementById('modal-detail-info').innerHTML = [
+        ['Pelapor', l.is_anonim ? '🕵️ Anonim' : l.mahasiswa.nama],
+        ['NIM', l.is_anonim ? '(Disembunyikan)' : l.mahasiswa.nim],
+        ['Program Studi', l.is_anonim ? '(Disembunyikan)' : l.mahasiswa.prodi],
+        ['Kategori', l.kategori],
+        ['Lokasi', l.lokasi],
+        ['Deskripsi', l.deskripsi],
+    ].map(([k,v]) => `<div style="display:flex;gap:12px;padding:8px 0;border-bottom:1px solid var(--border-light)"><div style="min-width:110px;font-size:12px;font-weight:600;color:var(--text-secondary)">${k}</div><div style="font-size:13px;color:var(--text-primary);flex:1">${v}</div></div>`).join('');
+
+    document.getElementById('modal-status-select').value = l.status === 'menunggu' ? 'diterima' : l.status;
+    document.getElementById('btn-generate-pdf').style.display = l.status === 'selesai' ? 'inline-flex' : 'none';
+
+    loadAdminChat(id);
+
+    const modal = document.getElementById('modal-detail');
+    modal.classList.add('active');
+    requestAnimationFrame(() => modal.classList.add('visible'));
+}
+
+function updateStatus() {
+    const l = LAPORAN_DATA.find(x => x.id === currentId);
+    if (!l) return;
+    const newStatus = document.getElementById('modal-status-select').value;
+    const komentar = document.getElementById('modal-komentar').value;
+    l.status = newStatus;
+    showToast(`Status diperbarui: ${newStatus}`, 'success');
+    document.getElementById('modal-tiket').innerHTML = `${l.tiket} &bull; ${statusBadge(newStatus)}`;
+    document.getElementById('btn-generate-pdf').style.display = newStatus === 'selesai' ? 'inline-flex' : 'none';
+    document.getElementById('modal-komentar').value = '';
+    renderList();
+}
+
+function loadAdminChat(id) {
+    const container = document.getElementById('admin-chat-container');
+    const msgs = CHAT[id] || [];
+    container.innerHTML = msgs.length === 0
+        ? '<div style="text-align:center;padding:16px;color:var(--text-tertiary);font-size:13px">Belum ada pesan</div>'
+        : msgs.map(m => {
+            const sent = m.sender === 'admin';
+            return `<div class="chat-bubble ${sent ? 'sent' : 'received'}">${!sent ? `<div style="font-size:11px;font-weight:600;margin-bottom:3px;opacity:0.7">${m.nama}</div>` : ''}${m.message}<div class="chat-meta"><span>${m.time}</span>${sent ? `<span class="chat-status ${m.is_read?'read':''}"><svg xmlns="http://www.w3.org/2000/svg" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="${m.is_read?'1 12 5 16 11 10':''} ${m.is_read?'9 12 13 16 23 6':'20 6 9 17 4 12'}"></polyline></svg></span>` : ''}</div></div>`;
+        }).join('');
+    container.scrollTop = container.scrollHeight;
+}
+
+function sendAdminChat() {
+    const input = document.getElementById('admin-chat-input');
+    const msg = input.value.trim();
+    if (!msg || !currentId) return;
+    input.value = '';
+    if (!CHAT[currentId]) CHAT[currentId] = [];
+    const now = new Date().toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+    CHAT[currentId].push({ sender: 'admin', nama: 'Admin', message: msg, time: now, is_read: false });
+    loadAdminChat(currentId);
+    showToast('Pesan terkirim', 'success');
+}
+
+function generateAdminPDF() {
+    const l = LAPORAN_DATA.find(x => x.id === currentId);
+    if (!l || typeof window.jspdf === 'undefined') { showToast('Mengunduh PDF...', 'info'); return; }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.setFontSize(18); doc.setFont('helvetica','bold');
+    doc.text('LAPORAN PENYELESAIAN', 105, 20, {align:'center'});
+    doc.setFontSize(11); doc.setFont('helvetica','normal');
+    doc.text('Institut Teknologi Garut — Suara Kampus', 105, 28, {align:'center'});
+    doc.line(20, 33, 190, 33);
+    let y = 42;
+    const rows = [['Nomor Laporan', l.tiket],['Pelapor', l.is_anonim?'Anonim':l.mahasiswa.nama],['NIM', l.is_anonim?'-':l.mahasiswa.nim],['Program Studi', l.is_anonim?'-':l.mahasiswa.prodi],['Kategori', l.kategori],['Lokasi', l.lokasi],['Status', 'Selesai'],['Diselesaikan oleh', 'Administrator'],['Tanggal', new Date().toLocaleDateString('id-ID')]];
+    rows.forEach(([k,v]) => { doc.setFont('helvetica','bold'); doc.text(k+':', 22, y); doc.setFont('helvetica','normal'); doc.text(String(v||'-'), 80, y); y += 8; });
+    y += 4; doc.line(20, y, 190, y); y += 8;
+    doc.setFont('helvetica','bold'); doc.text('Deskripsi:', 22, y); y += 6;
+    doc.setFont('helvetica','normal'); doc.splitTextToSize(l.deskripsi, 168).forEach(line => { doc.text(line, 22, y); y += 6; });
+    y += 10; doc.setFont('helvetica','normal'); doc.text('Administrator Suara Kampus', 140, y, {align:'center'}); y += 20;
+    doc.line(110, y, 190, y); y += 5;
+    doc.setFont('helvetica','bold'); doc.text('Administrator', 150, y, {align:'center'});
+    doc.save(`${l.tiket}_Penyelesaian.pdf`);
+    showToast('PDF berhasil digenerate!', 'success');
+}
+
+document.addEventListener('click', e => {
+    if (e.target.classList.contains('modal-overlay')) { e.target.classList.remove('visible'); setTimeout(()=>e.target.classList.remove('active'),250); }
+    if (e.target.dataset.closeModal) { const m = document.getElementById(e.target.dataset.closeModal); if(m){m.classList.remove('visible');setTimeout(()=>m.classList.remove('active'),250);} }
+});
+
+document.getElementById('hamburger-btn').addEventListener('click', () => { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebar-overlay').classList.add('active'); });
+document.getElementById('sidebar-overlay').addEventListener('click', () => { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('active'); });
+
+function showToast(msg, type='info') {
+    const el = document.createElement('div'); el.className = 'toast';
+    el.innerHTML = `<span>${{success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'}[type]}</span><span class="toast-msg">${msg}</span><button class="toast-close" onclick="this.closest('.toast').remove()">✕</button>`;
+    document.getElementById('toast-container').appendChild(el);
+    setTimeout(() => { el.classList.add('removing'); setTimeout(()=>el.remove(),300); }, 3500);
+}
+
+renderList();
+</script>
+</body>
+</html>

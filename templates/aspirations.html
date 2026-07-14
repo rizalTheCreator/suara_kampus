@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Papan Aspirasi - Suara Kampus ITG{% endblock %}
+
+{% block content %}
+<div class="page-header">
+    <div class="container">
+        <h1><i class="bi bi-megaphone me-2"></i>Papan Aspirasi Publik</h1>
+        <p>Sampaikan ide, kritik, dan harapan untuk perbaikan kampus</p>
+    </div>
+</div>
+
+<div class="container">
+    <!-- Create Aspiration -->
+    {% if current_user.is_authenticated and current_user.role == 'student' %}
+    <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
+        <div class="card-body p-4">
+            <h5 class="fw-bold mb-3"><i class="bi bi-pencil-square me-2 text-primary"></i>Tulis Aspirasi Baru</h5>
+            <form method="POST" action="{{ url_for('new_aspiration') }}">
+                <div class="mb-3">
+                    <textarea name="content" class="form-control" rows="3" placeholder="Bagikan ide atau harapanmu untuk kampus..." required></textarea>
+                </div>
+                <div class="d-flex justify-content-between align-items-center">
+                    <select name="category" class="form-control w-auto">
+                        <option value="">Pilih Kategori (Opsional)</option>
+                        <option value="Fasilitas">Fasilitas</option>
+                        <option value="Layanan">Layanan</option>
+                        <option value="Akademik">Akademik</option>
+                        <option value="Lainnya">Lainnya</option>
+                    </select>
+                    <button type="submit" class="btn btn-primary-custom">
+                        <i class="bi bi-send me-2"></i>Kirim Aspirasi
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Sort Tabs -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div class="btn-group">
+            <a href="{{ url_for('aspirations', sort='popular') }}" class="btn btn-outline-primary {% if sort == 'popular' %}active{% endif %}">
+                <i class="bi bi-fire me-1"></i>Terpopuler
+            </a>
+            <a href="{{ url_for('aspirations', sort='newest') }}" class="btn btn-outline-primary {% if sort == 'newest' %}active{% endif %}">
+                <i class="bi bi-clock me-1"></i>Terbaru
+            </a>
+        </div>
+        <span class="text-muted small">{{ aspirations|length }} aspirasi</span>
+    </div>
+
+    <!-- Aspirations List -->
+    <div class="row">
+        {% for asp in aspirations %}
+        <div class="col-lg-6 mb-3">
+            <div class="card border-0 shadow-sm" style="border-radius: 12px; border-left: 4px solid var(--secondary) !important;">
+                <div class="card-body p-4">
+                    <div class="d-flex justify-content-between align-items-start mb-2">
+                        {% if asp.category %}
+                        <span class="badge bg-light text-dark border">{{ asp.category }}</span>
+                        {% else %}
+                        <span class="badge bg-light text-dark border">Umum</span>
+                        {% endif %}
+                        <small class="text-muted">{{ asp.created_at.strftime('%d/%m/%Y') }}</small>
+                    </div>
+                    <p class="mb-3">{{ asp.content }}</p>
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex gap-2">
+                            {% if current_user.is_authenticated %}
+                            <form method="POST" action="{{ url_for('vote_aspiration', aspiration_id=asp.id) }}" class="d-inline">
+                                <input type="hidden" name="vote_type" value="like">
+                                <button type="submit" class="vote-btn like">
+                                    <i class="bi bi-hand-thumbs-up me-1"></i>{{ asp.likes_count }}
+                                </button>
+                            </form>
+                            <form method="POST" action="{{ url_for('vote_aspiration', aspiration_id=asp.id) }}" class="d-inline">
+                                <input type="hidden" name="vote_type" value="dislike">
+                                <button type="submit" class="vote-btn dislike">
+                                    <i class="bi bi-hand-thumbs-down me-1"></i>{{ asp.dislikes_count }}
+                                </button>
+                            </form>
+                            {% else %}
+                            <span class="vote-btn"><i class="bi bi-hand-thumbs-up me-1"></i>{{ asp.likes_count }}</span>
+                            <span class="vote-btn"><i class="bi bi-hand-thumbs-down me-1"></i>{{ asp.dislikes_count }}</span>
+                            {% endif %}
+                        </div>
+                        <span class="text-muted small"><i class="bi bi-person me-1"></i>Anonim</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="col-12 text-center py-5">
+            <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+            <p class="text-muted mt-3">Belum ada aspirasi. Jadilah yang pertama!</p>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<style>
+    .vote-btn {
+        border: none; background: transparent; color: var(--text-secondary);
+        font-weight: 600; padding: 0.25rem 0.75rem; border-radius: 6px;
+        transition: all 0.2s; cursor: pointer;
+    }
+    .vote-btn:hover.like { color: var(--success); background: rgba(40,167,69,0.1); }
+    .vote-btn:hover.dislike { color: var(--danger); background: rgba(220,53,69,0.1); }
+</style>
+{% endblock %}

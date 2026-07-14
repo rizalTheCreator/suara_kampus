@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Suara Kampus — Institut Teknologi Garut</title>
+    <meta name="description" content="Platform aspirasi dan pengaduan mahasiswa Institut Teknologi Garut. Sampaikan aspirasi dan laporan Anda dengan mudah, transparan, dan terstruktur.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <style>
+        /* Public-only styles */
+        .pub-header {
+            position: sticky; top: 0; z-index: 50;
+            height: 64px; display: flex; align-items: center; justify-content: space-between;
+            padding: 0 32px; background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(20px); border-bottom: 1px solid var(--border);
+        }
+        .hero {
+            min-height: 520px; display: flex; align-items: center; justify-content: center;
+            text-align: center; padding: 80px 24px; position: relative; overflow: hidden;
+            background: linear-gradient(135deg, #EFF6FF 0%, #F8FAFC 50%, #F5F3FF 100%);
+        }
+        .hero::before {
+            content: ''; position: absolute; inset: 0;
+            background: radial-gradient(circle at 20% 50%, rgba(37,99,235,0.07) 0%, transparent 60%),
+                        radial-gradient(circle at 80% 20%, rgba(139,92,246,0.06) 0%, transparent 60%);
+        }
+        .hero-title {
+            font-size: clamp(2rem, 5vw, 3.5rem); font-weight: 800; line-height: 1.15;
+            color: var(--text-primary);
+        }
+        .hero-title .gradient-text {
+            background: linear-gradient(135deg, var(--primary) 0%, #8B5CF6 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .pub-nav-link {
+            font-size: 14px; font-weight: 500; color: var(--text-secondary);
+            padding: 8px 14px; border-radius: var(--radius-md); transition: all 0.2s;
+        }
+        .pub-nav-link:hover { color: var(--text-primary); background: var(--bg-secondary); }
+        .section { padding: 64px 32px; }
+        .section-title { font-size: 24px; font-weight: 800; color: var(--text-primary); margin-bottom: 8px; }
+        .section-subtitle { font-size: 15px; color: var(--text-secondary); margin-bottom: 32px; }
+        .pub-footer { background: var(--text-primary); color: var(--border); padding: 32px; text-align: center; }
+        .stat-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; max-width: 900px; margin: 40px auto 0; }
+        .hero-stat { background: white; border-radius: var(--radius-lg); padding: 20px; box-shadow: var(--shadow-md); }
+        .hero-stat-value { font-size: 28px; font-weight: 800; color: var(--primary); }
+        .hero-stat-label { font-size: 12px; color: var(--text-secondary); margin-top: 2px; font-weight: 500; }
+        .floating-card {
+            position: absolute; background: white; border-radius: var(--radius-lg);
+            padding: 12px 16px; box-shadow: var(--shadow-lg); display: flex; gap: 10px;
+            align-items: center; font-size: 13px; font-weight: 500; border: 1px solid var(--border);
+        }
+        @media (max-width: 768px) {
+            .pub-header { padding: 0 16px; }
+            .section { padding: 40px 16px; }
+            .stat-grid { grid-template-columns: repeat(2, 1fr); }
+            .floating-card { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="pub-header">
+    <div style="display:flex;align-items:center;gap:10px">
+        <div style="width:36px;height:36px;background:var(--primary);border-radius:var(--radius-md);display:flex;align-items:center;justify-content:center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+        </div>
+        <span style="font-size:20px;font-weight:800;color:var(--text-primary)">Suara<span style="color:var(--primary)">Kampus</span></span>
+    </div>
+    <nav style="display:flex;align-items:center;gap:8px">
+        <a href="login.html" class="btn btn-outline btn-sm" id="btn-login">Masuk</a>
+        <a href="register.html" class="btn btn-primary btn-sm" id="btn-register">Daftar</a>
+    </nav>
+</header>
+
+<!-- Hero -->
+<section class="hero">
+    <div style="position:relative;z-index:1;max-width:680px">
+        <div style="display:inline-flex;align-items:center;gap:6px;background:var(--primary-light);color:var(--primary);border-radius:var(--radius-full);padding:6px 16px;font-size:12px;font-weight:600;margin-bottom:24px;animation:fadeIn 0.5s ease-out">
+            <span>🎓</span> Platform Aspirasi & Pengaduan Mahasiswa
+        </div>
+        <h1 class="hero-title animate-fade-in-up stagger-1">
+            Suarakan <span class="gradient-text">Aspirasimu</span>,<br>Bangun Kampus Lebih Baik
+        </h1>
+        <p style="font-size:17px;color:var(--text-secondary);margin:20px auto;max-width:520px;line-height:1.7;animation:fadeInUp 0.6s 0.1s ease-out both">
+            Platform digital mahasiswa Institut Teknologi Garut untuk menyampaikan laporan pengaduan dan aspirasi secara transparan, terstruktur, dan berdampak.
+        </p>
+        <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;animation:fadeInUp 0.6s 0.2s ease-out both">
+            <a href="register.html" class="btn btn-primary btn-lg ripple" id="btn-hero-daftar">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                Daftar Sekarang
+            </a>
+            <a href="login.html" class="btn btn-outline btn-lg" id="btn-hero-masuk">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+                Masuk
+            </a>
+        </div>
+
+        <!-- Floating cards (decorative) -->
+        <div class="floating-card animate-float" style="top:-20px;right:-80px">
+            <div style="width:32px;height:32px;border-radius:50%;background:var(--success-light);display:flex;align-items:center;justify-content:center">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--success)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+            </div>
+            <span>Laporan Selesai ✓</span>
+        </div>
+        <div class="floating-card animate-float" style="bottom:10px;left:-60px;animation-delay:0.5s">
+            <span>👍</span><span>+48 mendukung aspirasi WiFi</span>
+        </div>
+    </div>
+
+    <!-- Hero Stats -->
+    <div class="stat-grid" style="position:relative;z-index:1;width:100%;max-width:900px;margin:56px auto 0">
+        <div class="hero-stat animate-fade-in stagger-1">
+            <div class="hero-stat-value">248</div>
+            <div class="hero-stat-label">📋 Total Laporan</div>
+        </div>
+        <div class="hero-stat animate-fade-in stagger-2">
+            <div class="hero-stat-value">182</div>
+            <div class="hero-stat-label">💡 Total Aspirasi</div>
+        </div>
+        <div class="hero-stat animate-fade-in stagger-3">
+            <div class="hero-stat-value">195</div>
+            <div class="hero-stat-label">✅ Laporan Selesai</div>
+        </div>
+        <div class="hero-stat animate-fade-in stagger-4">
+            <div class="hero-stat-value">61</div>
+            <div class="hero-stat-label">🔥 Aspirasi Populer</div>
+        </div>
+    </div>
+</section>
+
+<!-- Cara Kerja -->
+<section class="section" style="background:var(--surface)">
+    <div style="max-width:1100px;margin:0 auto;text-align:center">
+        <h2 class="section-title">Mudah, Cepat, Transparan</h2>
+        <p class="section-subtitle">Tiga langkah untuk suaramu didengar</p>
+        <div class="grid-3" style="max-width:800px;margin:0 auto;gap:32px">
+            <div class="card card-hover" style="text-align:center;padding:32px 24px">
+                <div style="width:56px;height:56px;border-radius:var(--radius-lg);background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                </div>
+                <div style="font-size:13px;font-weight:700;color:var(--primary);margin-bottom:8px">01</div>
+                <h3 style="font-size:16px;font-weight:700;margin-bottom:8px">Buat Laporan</h3>
+                <p style="font-size:13px;color:var(--text-secondary);line-height:1.6">Isi formulir dengan detail masalah, lokasi, dan bukti foto. Pilih anonim jika perlu.</p>
+            </div>
+            <div class="card card-hover" style="text-align:center;padding:32px 24px">
+                <div style="width:56px;height:56px;border-radius:var(--radius-lg);background:var(--warning-light);color:var(--warning);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                </div>
+                <div style="font-size:13px;font-weight:700;color:var(--warning);margin-bottom:8px">02</div>
+                <h3 style="font-size:16px;font-weight:700;margin-bottom:8px">Pantau Progress</h3>
+                <p style="font-size:13px;color:var(--text-secondary);line-height:1.6">Pantau status laporan secara real-time melalui 5 tahap progress yang transparan.</p>
+            </div>
+            <div class="card card-hover" style="text-align:center;padding:32px 24px">
+                <div style="width:56px;height:56px;border-radius:var(--radius-lg);background:var(--success-light);color:var(--success);display:flex;align-items:center;justify-content:center;margin:0 auto 16px">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                </div>
+                <div style="font-size:13px;font-weight:700;color:var(--success);margin-bottom:8px">03</div>
+                <h3 style="font-size:16px;font-weight:700;margin-bottom:8px">Terima Solusi</h3>
+                <p style="font-size:13px;color:var(--text-secondary);line-height:1.6">Dapatkan notifikasi dan dokumen PDF penyelesaian saat laporan selesai ditangani.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Aspirasi Populer Preview -->
+<section class="section">
+    <div style="max-width:1100px;margin:0 auto">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:24px">
+            <div>
+                <h2 class="section-title">Aspirasi Terpopuler</h2>
+                <p style="font-size:14px;color:var(--text-secondary)">Aspirasi yang paling banyak didukung mahasiswa</p>
+            </div>
+            <a href="login.html" class="btn btn-outline btn-sm">Lihat Semua →</a>
+        </div>
+        <div class="grid-3">
+            <!-- Card 1 -->
+            <div class="aspiration-card">
+                <div class="asp-image">
+                    <img src="https://images.unsplash.com/photo-1507842217343-583bb7270b66?w=400" alt="Aspirasi WiFi" loading="lazy">
+                </div>
+                <div class="asp-body">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                        <span class="badge badge-warning">Dipertimbangkan</span>
+                        <span style="font-size:11px;color:var(--text-tertiary)">Fasilitas</span>
+                    </div>
+                    <h3 style="font-size:15px;font-weight:700;margin-bottom:6px;line-height:1.4">Penambahan Hotspot WiFi di Area Perpustakaan</h3>
+                    <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">Sinyal WiFi di perpustakaan sangat lemah dan tidak stabil untuk akses jurnal online.</p>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
+                        <span style="font-size:11px;color:var(--primary);background:var(--primary-light);padding:2px 8px;border-radius:var(--radius-full)">#wifi</span>
+                        <span style="font-size:11px;color:var(--primary);background:var(--primary-light);padding:2px 8px;border-radius:var(--radius-full)">#perpustakaan</span>
+                    </div>
+                </div>
+                <div class="asp-actions">
+                    <div style="display:flex;gap:8px">
+                        <span style="font-size:13px;color:var(--text-secondary)">👍 48 mendukung</span>
+                    </div>
+                    <a href="login.html" class="btn btn-sm btn-outline">Login untuk Vote</a>
+                </div>
+            </div>
+            <!-- Card 2 -->
+            <div class="aspiration-card">
+                <div class="asp-image">
+                    <img src="https://images.unsplash.com/photo-1555448248-2571daf6344b?w=400" alt="Aspirasi CCTV" loading="lazy">
+                </div>
+                <div class="asp-body">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                        <span class="badge badge-success">Diimplementasikan</span>
+                        <span style="font-size:11px;color:var(--text-tertiary)">Keamanan</span>
+                    </div>
+                    <h3 style="font-size:15px;font-weight:700;margin-bottom:6px;line-height:1.4">Penambahan CCTV di Area Parkir Motor</h3>
+                    <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">Area parkir motor tidak memiliki kamera CCTV dan sering terjadi kehilangan barang.</p>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
+                        <span style="font-size:11px;color:var(--primary);background:var(--primary-light);padding:2px 8px;border-radius:var(--radius-full)">#cctv</span>
+                        <span style="font-size:11px;color:var(--primary);background:var(--primary-light);padding:2px 8px;border-radius:var(--radius-full)">#keamanan</span>
+                    </div>
+                </div>
+                <div class="asp-actions">
+                    <div style="font-size:13px;color:var(--text-secondary)">👍 61 mendukung</div>
+                    <a href="login.html" class="btn btn-sm btn-outline">Login untuk Vote</a>
+                </div>
+            </div>
+            <!-- Card 3 -->
+            <div class="aspiration-card">
+                <div class="asp-image">
+                    <img src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400" alt="Aspirasi Lab" loading="lazy">
+                </div>
+                <div class="asp-body">
+                    <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                        <span class="badge badge-primary">Ditinjau</span>
+                        <span style="font-size:11px;color:var(--text-tertiary)">Akademik</span>
+                    </div>
+                    <h3 style="font-size:15px;font-weight:700;margin-bottom:6px;line-height:1.4">Perpanjangan Jam Buka Laboratorium Komputer</h3>
+                    <p style="font-size:13px;color:var(--text-secondary);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">Lab komputer hanya buka sampai 17.00, padahal banyak mahasiswa butuh akses malam hari.</p>
+                    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:10px">
+                        <span style="font-size:11px;color:var(--primary);background:var(--primary-light);padding:2px 8px;border-radius:var(--radius-full)">#laboratorium</span>
+                        <span style="font-size:11px;color:var(--primary);background:var(--primary-light);padding:2px 8px;border-radius:var(--radius-full)">#akademik</span>
+                    </div>
+                </div>
+                <div class="asp-actions">
+                    <div style="font-size:13px;color:var(--text-secondary)">👍 35 mendukung</div>
+                    <a href="login.html" class="btn btn-sm btn-outline">Login untuk Vote</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA -->
+<section style="background:linear-gradient(135deg, var(--primary) 0%, #7C3AED 100%);padding:64px 32px;text-align:center">
+    <h2 style="font-size:28px;font-weight:800;color:white;margin-bottom:12px">Bergabung Bersama Kami</h2>
+    <p style="font-size:16px;color:rgba(255,255,255,0.8);max-width:500px;margin:0 auto 28px;line-height:1.6">Jadilah bagian dari perubahan positif di Institut Teknologi Garut.</p>
+    <a href="register.html" class="btn btn-lg" id="btn-cta-register" style="background:white;color:var(--primary);font-weight:700">
+        Daftar Gratis Sekarang
+    </a>
+</section>
+
+<!-- Footer -->
+<footer class="pub-footer">
+    <div style="max-width:800px;margin:0 auto">
+        <div style="font-size:20px;font-weight:800;color:white;margin-bottom:8px">Suara<span style="color:#93C5FD">Kampus</span></div>
+        <p style="font-size:13px;margin-bottom:16px">Platform Aspirasi & Pengaduan Mahasiswa Institut Teknologi Garut</p>
+        <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;font-size:12px;color:rgba(255,255,255,0.4)">
+            © 2026 Institut Teknologi Garut. Dikembangkan untuk kemajuan kampus.
+        </div>
+    </div>
+</footer>
+
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+<script>
+    // Check if already logged in
+    const user = JSON.parse(localStorage.getItem('sk_user') || 'null');
+    if (user) {
+        if (user.role === 'admin') window.location.href = 'admin-dashboard.html';
+        else window.location.href = 'dashboard.html';
+    }
+    lucide.createIcons();
+</script>
+</body>
+</html>

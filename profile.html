@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profil — Suara Kampus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<!-- Sidebar injected by role -->
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo" onclick="goHome()">
+        <div class="logo-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></div>
+        <span class="logo-text">Suara<span>Kampus</span></span>
+    </div>
+    <nav class="sidebar-nav" id="sidebar-nav"></nav>
+    <div class="sidebar-footer">
+        <div class="sidebar-user" onclick="window.location.href='profile.html'">
+            <div id="sidebar-avatar" style="width:40px;height:40px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px">N</div>
+            <div><div class="sidebar-user-name" id="sidebar-name">Nurhuda</div><div class="sidebar-user-role" id="sidebar-role">Mahasiswa</div></div>
+        </div>
+    </div>
+</aside>
+
+<div class="content-area">
+    <header class="topbar">
+        <div style="display:flex;align-items:center;gap:12px">
+            <button class="mobile-hamburger" id="hamburger-btn"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+            <span class="topbar-title">Profil Saya</span>
+        </div>
+    </header>
+
+    <main class="page-content" style="max-width:800px">
+
+        <!-- === GANTI PASSWORD (admin first login) === -->
+        <div id="view-first-login" style="display:none">
+            <div class="card" style="max-width:480px;margin:0 auto;border-top:4px solid var(--warning)">
+                <div style="text-align:center;margin-bottom:24px">
+                    <div style="width:56px;height:56px;border-radius:50%;background:var(--warning-light);color:var(--warning);display:flex;align-items:center;justify-content:center;margin:0 auto 12px;font-size:24px">🔐</div>
+                    <h2 style="font-size:20px;font-weight:700">Ganti Password Admin</h2>
+                    <p style="font-size:13px;color:var(--text-secondary);margin-top:4px">Untuk keamanan, Anda diwajibkan mengganti password pada login pertama.</p>
+                </div>
+                <form onsubmit="changePasswordFirstLogin(event)">
+                    <div class="form-group">
+                        <label class="form-label">Password Lama</label>
+                        <input type="password" id="fl-old" class="form-input" placeholder="Password default: itg@garut" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Password Baru</label>
+                        <input type="password" id="fl-new" class="form-input" placeholder="Minimal 8 karakter" required minlength="8">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Konfirmasi Password Baru</label>
+                        <input type="password" id="fl-confirm" class="form-input" placeholder="Ulangi password baru" required>
+                    </div>
+                    <div id="fl-error" style="display:none;background:var(--error-light);border-radius:var(--radius-md);padding:12px;font-size:13px;color:var(--error);margin-bottom:16px"></div>
+                    <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;padding:13px">Simpan Password</button>
+                </form>
+            </div>
+        </div>
+
+        <!-- === PROFILE VIEW === -->
+        <div id="view-profile">
+            <!-- Cover -->
+            <div style="border-radius:var(--radius-xl) var(--radius-xl) 0 0;background:linear-gradient(135deg, var(--primary) 0%, #7C3AED 100%);height:140px;position:relative">
+                <div id="profile-avatar" style="width:88px;height:88px;border-radius:50%;background:white;border:4px solid white;position:absolute;bottom:-44px;left:32px;display:flex;align-items:center;justify-content:center;font-size:32px;font-weight:800;color:var(--primary);box-shadow:var(--shadow-md)">N</div>
+            </div>
+
+            <!-- Profile Info -->
+            <div class="card" style="border-radius:0 0 var(--radius-xl) var(--radius-xl);padding-top:60px;border-top:none;box-shadow:none;border:1px solid var(--border);margin-bottom:20px">
+                <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:12px">
+                    <div>
+                        <h2 style="font-size:22px;font-weight:800" id="profile-name">Nurhuda</h2>
+                        <div id="profile-info" style="font-size:14px;color:var(--text-secondary);margin-top:4px"></div>
+                    </div>
+                    <button onclick="openModal('modal-edit')" class="btn btn-outline btn-sm" id="btn-edit-profile">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path></svg>
+                        Edit Profil
+                    </button>
+                </div>
+
+                <div class="grid-2" style="gap:12px;margin-top:20px" id="profile-detail-grid">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+
+            <!-- Actions -->
+            <div style="display:flex;flex-direction:column;gap:10px">
+                <button onclick="openModal('modal-password')" class="card card-hover" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;width:100%">
+                    <div style="width:40px;height:40px;border-radius:var(--radius-md);background:var(--primary-light);color:var(--primary);display:flex;align-items:center;justify-content:center;flex-shrink:0">🔒</div>
+                    <div style="flex:1"><div style="font-size:14px;font-weight:600">Ganti Password</div><div style="font-size:12px;color:var(--text-secondary)">Perbarui password akun Anda</div></div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+                <button onclick="confirmLogout()" class="card card-hover" style="display:flex;align-items:center;gap:14px;padding:16px;text-align:left;width:100%;border-color:var(--error-light)">
+                    <div style="width:40px;height:40px;border-radius:var(--radius-md);background:var(--error-light);color:var(--error);display:flex;align-items:center;justify-content:center;flex-shrink:0">🚪</div>
+                    <div style="flex:1"><div style="font-size:14px;font-weight:600;color:var(--error)">Keluar</div><div style="font-size:12px;color:var(--text-secondary)">Logout dari akun Anda</div></div>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--error)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                </button>
+            </div>
+        </div>
+    </main>
+</div>
+
+<!-- Edit Profile Modal -->
+<div id="modal-edit" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-header"><h3 style="font-size:18px;font-weight:700">Edit Profil</h3><button class="btn btn-ghost btn-icon" data-close-modal="modal-edit">✕</button></div>
+        <div class="modal-body">
+            <div class="form-group"><label class="form-label">Nama Lengkap</label><input type="text" id="edit-nama" class="form-input" value="Nurhuda"></div>
+            <div class="form-group" id="edit-nim-group"><label class="form-label">NIM</label><input type="text" id="edit-nim" class="form-input" readonly value="2407043" style="background:#E2E8F0;cursor:not-allowed"><span class="form-hint">NIM tidak dapat diubah</span></div>
+            <div class="form-group" id="edit-prodi-group">
+                <label class="form-label">Program Studi</label>
+                <div style="position:relative">
+                    <select id="edit-prodi" class="form-input" style="appearance:none;padding-right:36px">
+                        <option value="Sistem Informasi" selected>Sistem Informasi</option>
+                        <option value="Teknik Informatika">Teknik Informatika</option>
+                        <option value="Teknik Sipil">Teknik Sipil</option>
+                        <option value="Arsitektur">Arsitektur</option>
+                        <option value="Teknik Industri">Teknik Industri</option>
+                    </select>
+                    <div style="position:absolute;right:12px;top:50%;transform:translateY(-50%);pointer-events:none;color:var(--text-tertiary)">▼</div>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" data-close-modal="modal-edit">Batal</button>
+            <button class="btn btn-primary" onclick="saveProfile()">Simpan</button>
+        </div>
+    </div>
+</div>
+
+<!-- Change Password Modal -->
+<div id="modal-password" class="modal-overlay">
+    <div class="modal-box">
+        <div class="modal-header"><h3 style="font-size:18px;font-weight:700">Ganti Password</h3><button class="btn btn-ghost btn-icon" data-close-modal="modal-password">✕</button></div>
+        <div class="modal-body">
+            <div class="form-group"><label class="form-label">Password Lama</label><input type="password" id="pwd-old" class="form-input" placeholder="Password saat ini"></div>
+            <div class="form-group"><label class="form-label">Password Baru</label><input type="password" id="pwd-new" class="form-input" placeholder="Minimal 8 karakter" minlength="8"></div>
+            <div class="form-group"><label class="form-label">Konfirmasi Password Baru</label><input type="password" id="pwd-confirm" class="form-input" placeholder="Ulangi password baru"></div>
+            <div id="pwd-error" style="display:none;background:var(--error-light);border-radius:var(--radius-md);padding:12px;font-size:13px;color:var(--error)"></div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" data-close-modal="modal-password">Batal</button>
+            <button class="btn btn-primary" onclick="changePassword()">Ganti Password</button>
+        </div>
+    </div>
+</div>
+
+<!-- Logout Confirm Modal -->
+<div id="modal-logout" class="modal-overlay">
+    <div class="modal-box" style="max-width:400px">
+        <div class="modal-header"><h3 style="font-size:18px;font-weight:700">Konfirmasi Keluar</h3></div>
+        <div class="modal-body"><p style="color:var(--text-secondary)">Anda yakin ingin keluar dari akun ini?</p></div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" data-close-modal="modal-logout">Batal</button>
+            <button class="btn btn-danger" onclick="doLogout()">Ya, Keluar</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+<script>
+const user = JSON.parse(localStorage.getItem('sk_user') || 'null');
+if (!user || !localStorage.getItem('sk_token')) { window.location.href = 'login.html'; }
+
+const isAdmin = user?.role === 'admin';
+
+function goHome() { window.location.href = isAdmin ? 'admin-dashboard.html' : 'dashboard.html'; }
+
+// Sidebar nav
+const navItems = isAdmin ? [
+    { href: 'admin-dashboard.html', icon: '📊', label: 'Dashboard' },
+    { href: 'admin-laporan.html', icon: '📋', label: 'Kelola Laporan' },
+    { href: 'admin-aspirasi.html', icon: '💡', label: 'Kelola Aspirasi' },
+    { href: 'admin-mahasiswa.html', icon: '👥', label: 'Mahasiswa' },
+] : [
+    { href: 'dashboard.html', icon: '🏠', label: 'Dashboard' },
+    { href: 'laporan.html', icon: '📋', label: 'Laporan Saya' },
+    { href: 'laporan.html?tab=buat', icon: '➕', label: 'Buat Laporan' },
+    { href: 'aspirasi.html', icon: '💡', label: 'Aspirasi' },
+];
+document.getElementById('sidebar-nav').innerHTML = navItems.map(n =>
+    `<a class="nav-item" href="${n.href}" style="display:flex;align-items:center;gap:12px"><span>${n.icon}</span>${n.label}</a>`
+).join('');
+document.getElementById('sidebar-name').textContent = user?.nama || 'Pengguna';
+document.getElementById('sidebar-role').textContent = isAdmin ? 'Administrator' : 'Mahasiswa';
+document.getElementById('sidebar-avatar').textContent = (user?.nama || 'U')[0].toUpperCase();
+document.getElementById('profile-avatar').textContent = (user?.nama || 'U')[0].toUpperCase();
+
+// Populate profile
+document.getElementById('profile-name').textContent = user?.nama || '-';
+const infoLine = isAdmin
+    ? `Administrator · ${user?.email || 'admin@itg.ac.id'}`
+    : `NIM ${user?.nim} · ${user?.prodi} · ${user?.email}`;
+document.getElementById('profile-info').textContent = infoLine;
+
+const detailGrid = document.getElementById('profile-detail-grid');
+if (isAdmin) {
+    detailGrid.innerHTML = `
+        <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:14px"><div style="font-size:11px;color:var(--text-tertiary);margin-bottom:4px">EMAIL</div><div style="font-size:14px;font-weight:600">${user?.email || 'admin@itg.ac.id'}</div></div>
+        <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:14px"><div style="font-size:11px;color:var(--text-tertiary);margin-bottom:4px">PERAN</div><div style="font-size:14px;font-weight:600">Administrator</div></div>`;
+    document.getElementById('edit-nim-group').style.display = 'none';
+    document.getElementById('edit-prodi-group').style.display = 'none';
+    document.getElementById('edit-nama').value = user?.nama || 'Administrator';
+} else {
+    detailGrid.innerHTML = `
+        <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:14px"><div style="font-size:11px;color:var(--text-tertiary);margin-bottom:4px">NIM</div><div style="font-size:14px;font-weight:600">${user?.nim || '-'}</div></div>
+        <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:14px"><div style="font-size:11px;color:var(--text-tertiary);margin-bottom:4px">PROGRAM STUDI</div><div style="font-size:14px;font-weight:600">${user?.prodi || '-'}</div></div>
+        <div style="background:var(--bg-secondary);border-radius:var(--radius-md);padding:14px;grid-column:1/-1"><div style="font-size:11px;color:var(--text-tertiary);margin-bottom:4px">EMAIL</div><div style="font-size:14px;font-weight:600">${user?.email || '-'}</div></div>`;
+    document.getElementById('edit-nim').value = user?.nim || '';
+    document.getElementById('edit-prodi').value = user?.prodi || 'Sistem Informasi';
+    document.getElementById('edit-nama').value = user?.nama || '';
+}
+
+// First login
+const firstLogin = new URLSearchParams(location.search).get('first_login');
+if (firstLogin === '1') {
+    document.getElementById('view-first-login').style.display = 'block';
+    document.getElementById('view-profile').style.display = 'none';
+}
+
+async function changePasswordFirstLogin(e) {
+    e.preventDefault();
+    const old = document.getElementById('fl-old').value;
+    const newPwd = document.getElementById('fl-new').value;
+    const confirm = document.getElementById('fl-confirm').value;
+    const errEl = document.getElementById('fl-error');
+    if (old !== 'itg@garut') { errEl.textContent = 'Password lama salah.'; errEl.style.display = 'block'; return; }
+    if (newPwd !== confirm) { errEl.textContent = 'Password baru tidak cocok.'; errEl.style.display = 'block'; return; }
+    if (newPwd.length < 8) { errEl.textContent = 'Password minimal 8 karakter.'; errEl.style.display = 'block'; return; }
+    await new Promise(r => setTimeout(r, 800));
+    user.first_login = false;
+    localStorage.setItem('sk_user', JSON.stringify(user));
+    showToast('Password berhasil diubah! Selamat datang.', 'success');
+    setTimeout(() => window.location.href = 'admin-dashboard.html', 1500);
+}
+
+function openModal(id) {
+    const m = document.getElementById(id);
+    m.classList.add('active');
+    requestAnimationFrame(() => m.classList.add('visible'));
+}
+function closeModal(id) {
+    const m = document.getElementById(id); if (!m) return;
+    m.classList.remove('visible'); setTimeout(() => m.classList.remove('active'), 250);
+}
+document.addEventListener('click', e => {
+    if (e.target.classList.contains('modal-overlay')) closeModal(e.target.id);
+    if (e.target.dataset.closeModal) closeModal(e.target.dataset.closeModal);
+});
+
+function saveProfile() {
+    const nama = document.getElementById('edit-nama').value.trim();
+    if (!nama) return;
+    user.nama = nama;
+    if (!isAdmin) user.prodi = document.getElementById('edit-prodi').value;
+    localStorage.setItem('sk_user', JSON.stringify(user));
+    document.getElementById('profile-name').textContent = nama;
+    document.getElementById('sidebar-name').textContent = nama;
+    document.getElementById('sidebar-avatar').textContent = nama[0].toUpperCase();
+    document.getElementById('profile-avatar').textContent = nama[0].toUpperCase();
+    closeModal('modal-edit');
+    showToast('Profil berhasil diperbarui.', 'success');
+}
+
+async function changePassword() {
+    const oldPwd = document.getElementById('pwd-old').value;
+    const newPwd = document.getElementById('pwd-new').value;
+    const confirm = document.getElementById('pwd-confirm').value;
+    const errEl = document.getElementById('pwd-error');
+    errEl.style.display = 'none';
+    if (newPwd.length < 8) { errEl.textContent = 'Password baru minimal 8 karakter.'; errEl.style.display = 'block'; return; }
+    if (newPwd !== confirm) { errEl.textContent = 'Konfirmasi password tidak cocok.'; errEl.style.display = 'block'; return; }
+    await new Promise(r => setTimeout(r, 600));
+    closeModal('modal-password');
+    showToast('Password berhasil diubah.', 'success');
+    document.getElementById('pwd-old').value = '';
+    document.getElementById('pwd-new').value = '';
+    document.getElementById('pwd-confirm').value = '';
+}
+
+function confirmLogout() { openModal('modal-logout'); }
+function doLogout() {
+    localStorage.removeItem('sk_token');
+    localStorage.removeItem('sk_user');
+    window.location.href = 'login.html';
+}
+
+document.getElementById('hamburger-btn').addEventListener('click', () => { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebar-overlay').classList.add('active'); });
+document.getElementById('sidebar-overlay').addEventListener('click', () => { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('active'); });
+
+function showToast(msg, type='info') {
+    const el = document.createElement('div'); el.className = 'toast';
+    el.innerHTML = `<span>${{success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'}[type]}</span><span class="toast-msg">${msg}</span><button class="toast-close" onclick="this.closest('.toast').remove()">✕</button>`;
+    document.getElementById('toast-container').appendChild(el);
+    setTimeout(() => { el.classList.add('removing'); setTimeout(() => el.remove(), 300); }, 3500);
+}
+</script>
+</body>
+</html>

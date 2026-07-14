@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data Mahasiswa — Admin Suara Kampus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo" onclick="window.location.href='admin-dashboard.html'">
+        <div class="logo-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></div>
+        <span class="logo-text">Suara<span>Kampus</span></span>
+    </div>
+    <nav class="sidebar-nav">
+        <a class="nav-item" href="admin-dashboard.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>Dashboard</a>
+        <a class="nav-item" href="admin-laporan.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>Kelola Laporan</a>
+        <a class="nav-item" href="admin-aspirasi.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle></svg>Kelola Aspirasi</a>
+        <a class="nav-item active" href="admin-mahasiswa.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>Mahasiswa</a>
+    </nav>
+    <div class="sidebar-footer">
+        <div class="sidebar-user" onclick="window.location.href='profile.html'">
+            <div style="width:40px;height:40px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:700">A</div>
+            <div><div class="sidebar-user-name">Administrator</div><div class="sidebar-user-role">Admin</div></div>
+        </div>
+    </div>
+</aside>
+
+<div class="content-area">
+    <header class="topbar">
+        <div style="display:flex;align-items:center;gap:12px">
+            <button class="mobile-hamburger" id="hamburger-btn"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+            <span class="topbar-title">Data Mahasiswa</span>
+        </div>
+    </header>
+
+    <main class="page-content">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+            <h2 style="font-size:20px;font-weight:700">Data Mahasiswa <span style="font-size:14px;font-weight:500;color:var(--text-tertiary)" id="total-label"></span></h2>
+            <div style="position:relative">
+                <svg style="position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text-tertiary)" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="search-input" placeholder="Cari nama atau NIM..." class="form-input" style="padding-left:36px;width:260px" oninput="renderMahasiswa()">
+            </div>
+        </div>
+
+        <div style="display:flex;flex-direction:column;gap:10px" id="mahasiswa-list"></div>
+    </main>
+</div>
+
+<!-- Reset Password Modal -->
+<div id="modal-reset" class="modal-overlay">
+    <div class="modal-box" style="max-width:400px">
+        <div class="modal-header"><h3 style="font-size:18px;font-weight:700">Reset Password</h3></div>
+        <div class="modal-body">
+            <p style="color:var(--text-secondary);font-size:14px">Reset password untuk mahasiswa <strong id="reset-nama">-</strong>?</p>
+            <div style="background:var(--warning-light);border:1px solid var(--warning);border-radius:var(--radius-md);padding:12px;margin-top:12px;font-size:13px;color:#92400E">
+                Password akan direset ke default: <strong>password123</strong><br>
+                Mahasiswa diwajibkan mengganti password setelah login.
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" data-close-modal="modal-reset">Batal</button>
+            <button class="btn btn-warning" onclick="doReset()" style="background:var(--warning);color:white">Reset Password</button>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div id="modal-delete" class="modal-overlay">
+    <div class="modal-box" style="max-width:400px">
+        <div class="modal-header"><h3 style="font-size:18px;font-weight:700;color:var(--error)">Hapus Akun</h3></div>
+        <div class="modal-body">
+            <p style="color:var(--text-secondary)">Hapus akun mahasiswa <strong id="delete-nama">-</strong>? Data yang dihapus tidak dapat dikembalikan.</p>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" data-close-modal="modal-delete">Batal</button>
+            <button class="btn btn-danger" onclick="doDelete()">Hapus</button>
+        </div>
+    </div>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+<script>
+const user = JSON.parse(localStorage.getItem('sk_user') || 'null');
+if (!user || !localStorage.getItem('sk_token') || user.role !== 'admin') window.location.href = 'login.html';
+
+let MAHASISWA = [
+    { id:1, nama:'Nurhuda', nim:'2407043', email:'2407043@itg.ac.id', prodi:'Sistem Informasi', laporan:3, aspirasi:2, joined:'1 Jul 2026' },
+    { id:2, nama:'Ahmad Fauzan', nim:'2307021', email:'2307021@itg.ac.id', prodi:'Teknik Informatika', laporan:1, aspirasi:1, joined:'15 Jun 2026' },
+    { id:3, nama:'Siti Rahayu', nim:'2207089', email:'2207089@itg.ac.id', prodi:'Arsitektur', laporan:2, aspirasi:3, joined:'20 Mei 2026' },
+    { id:4, nama:'Budi Santoso', nim:'2407102', email:'2407102@itg.ac.id', prodi:'Teknik Sipil', laporan:0, aspirasi:1, joined:'2 Jul 2026' },
+    { id:5, nama:'Dewi Lestari', nim:'2307055', email:'2307055@itg.ac.id', prodi:'Teknik Industri', laporan:1, aspirasi:0, joined:'10 Jun 2026' },
+];
+let targetId = null;
+const colors = ['#2563EB','#8B5CF6','#10B981','#EF4444','#06B6D4'];
+
+function renderMahasiswa() {
+    const q = document.getElementById('search-input').value.toLowerCase();
+    const filtered = q ? MAHASISWA.filter(m => m.nama.toLowerCase().includes(q) || m.nim.includes(q)) : MAHASISWA;
+    document.getElementById('total-label').textContent = `(${filtered.length} mahasiswa)`;
+    const container = document.getElementById('mahasiswa-list');
+    if (!filtered.length) { container.innerHTML = '<div class="empty-state"><div class="empty-icon">👥</div><h3>Tidak Ditemukan</h3><p>Coba cari dengan nama atau NIM yang berbeda.</p></div>'; return; }
+    container.innerHTML = filtered.map((m, i) => `
+        <div class="card card-hover" style="display:flex;align-items:center;gap:16px;padding:16px" id="mhs-${m.id}">
+            <div style="width:44px;height:44px;border-radius:50%;background:${colors[i%colors.length]};color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:16px;flex-shrink:0">${m.nama[0]}</div>
+            <div style="flex:1;min-width:0">
+                <div style="font-size:15px;font-weight:700;color:var(--text-primary)">${m.nama}</div>
+                <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">${m.nim} · ${m.prodi}</div>
+                <div style="font-size:11px;color:var(--text-tertiary);margin-top:1px">${m.email}</div>
+            </div>
+            <div style="display:flex;gap:16px;text-align:center">
+                <div><div style="font-size:16px;font-weight:700;color:var(--primary)">${m.laporan}</div><div style="font-size:10px;color:var(--text-tertiary)">Laporan</div></div>
+                <div><div style="font-size:16px;font-weight:700;color:var(--purple)">${m.aspirasi}</div><div style="font-size:10px;color:var(--text-tertiary)">Aspirasi</div></div>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:6px;flex-shrink:0">
+                <button onclick="openReset(${m.id},'${m.nama}')" class="btn btn-outline btn-sm" style="font-size:11px;padding:5px 10px">🔐 Reset Pwd</button>
+                <button onclick="openDelete(${m.id},'${m.nama}')" class="btn btn-sm" style="background:var(--error-light);color:var(--error);border:none;font-size:11px;padding:5px 10px">🗑️ Hapus</button>
+            </div>
+        </div>`).join('');
+}
+
+function openReset(id, nama) {
+    targetId = id;
+    document.getElementById('reset-nama').textContent = nama;
+    const m = document.getElementById('modal-reset');
+    m.classList.add('active'); requestAnimationFrame(() => m.classList.add('visible'));
+}
+function doReset() {
+    closeModal('modal-reset');
+    showToast('Password berhasil direset ke default.', 'success');
+}
+function openDelete(id, nama) {
+    targetId = id;
+    document.getElementById('delete-nama').textContent = nama;
+    const m = document.getElementById('modal-delete');
+    m.classList.add('active'); requestAnimationFrame(() => m.classList.add('visible'));
+}
+function doDelete() {
+    MAHASISWA = MAHASISWA.filter(m => m.id !== targetId);
+    closeModal('modal-delete');
+    renderMahasiswa();
+    showToast('Akun mahasiswa berhasil dihapus.', 'success');
+}
+
+function closeModal(id) {
+    const m = document.getElementById(id); if (!m) return;
+    m.classList.remove('visible'); setTimeout(() => m.classList.remove('active'), 250);
+}
+document.addEventListener('click', e => {
+    if (e.target.classList.contains('modal-overlay')) closeModal(e.target.id);
+    if (e.target.dataset.closeModal) closeModal(e.target.dataset.closeModal);
+});
+
+document.getElementById('hamburger-btn').addEventListener('click', () => { document.getElementById('sidebar').classList.add('open'); document.getElementById('sidebar-overlay').classList.add('active'); });
+document.getElementById('sidebar-overlay').addEventListener('click', () => { document.getElementById('sidebar').classList.remove('open'); document.getElementById('sidebar-overlay').classList.remove('active'); });
+
+function showToast(msg, type='info') {
+    const el = document.createElement('div'); el.className = 'toast';
+    el.innerHTML = `<span>${{success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'}[type]}</span><span class="toast-msg">${msg}</span><button class="toast-close" onclick="this.closest('.toast').remove()">✕</button>`;
+    document.getElementById('toast-container').appendChild(el);
+    setTimeout(() => { el.classList.add('removing'); setTimeout(()=>el.remove(),300); }, 3500);
+}
+
+renderMahasiswa();
+</script>
+</body>
+</html>

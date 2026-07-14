@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Laporan — Suara Kampus</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="sidebar-overlay" id="sidebar-overlay"></div>
+
+<aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo" onclick="window.location.href='dashboard.html'">
+        <div class="logo-icon"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg></div>
+        <span class="logo-text">Suara<span>Kampus</span></span>
+    </div>
+    <nav class="sidebar-nav">
+        <a class="nav-item" href="dashboard.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>Dashboard</a>
+        <a class="nav-item active" href="laporan.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>Laporan Saya</a>
+        <a class="nav-item" href="laporan.html?tab=buat"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>Buat Laporan</a>
+        <a class="nav-item" href="aspirasi.html"><svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>Aspirasi</a>
+    </nav>
+    <div class="sidebar-footer">
+        <div class="sidebar-user" onclick="window.location.href='profile.html'">
+            <div style="width:40px;height:40px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:15px;flex-shrink:0">N</div>
+            <div><div class="sidebar-user-name" id="sidebar-name">Nurhuda</div><div class="sidebar-user-role">Mahasiswa</div></div>
+        </div>
+    </div>
+</aside>
+
+<div class="content-area">
+    <header class="topbar">
+        <div style="display:flex;align-items:center;gap:12px">
+            <button class="mobile-hamburger" id="hamburger-btn"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg></button>
+            <span class="topbar-title" id="page-title">Laporan Saya</span>
+        </div>
+        <div class="topbar-actions">
+            <a href="profile.html" class="btn btn-ghost btn-icon"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg></a>
+        </div>
+    </header>
+
+    <main class="page-content">
+
+        <!-- === VIEW: LIST LAPORAN === -->
+        <div id="view-list">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+                <h2 style="font-size:20px;font-weight:700">Laporan Saya</h2>
+                <a href="laporan.html?tab=buat" class="btn btn-primary btn-sm" id="btn-buat-new">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                    Buat Laporan
+                </a>
+            </div>
+            <div class="filter-bar">
+                <button class="filter-chip active" onclick="filterLaporan('semua', this)">Semua</button>
+                <button class="filter-chip" onclick="filterLaporan('menunggu', this)">Menunggu</button>
+                <button class="filter-chip" onclick="filterLaporan('diproses', this)">Diproses</button>
+                <button class="filter-chip" onclick="filterLaporan('selesai', this)">Selesai</button>
+            </div>
+            <div id="laporan-items" style="display:flex;flex-direction:column;gap:12px">
+                <!-- Cards injected by JS -->
+            </div>
+        </div>
+
+        <!-- === VIEW: BUAT LAPORAN === -->
+        <div id="view-buat" style="display:none">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+                <button class="btn btn-ghost btn-icon" onclick="showView('list')" id="btn-back-list"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+                <div><h2 style="font-size:20px;font-weight:700">Buat Laporan Baru</h2><p style="font-size:13px;color:var(--text-secondary)">Tiket: <strong id="new-tiket">LPR-2026-0004</strong></p></div>
+            </div>
+
+            <div class="card" style="max-width:720px">
+                <form id="form-laporan" onsubmit="submitLaporan(event)">
+
+                    <!-- Kategori -->
+                    <div class="form-group">
+                        <label class="form-label">Kategori Laporan <span style="color:var(--error)">*</span></label>
+                        <div class="grid-3" id="kategori-grid" style="gap:10px">
+                            <div class="category-card" onclick="selectKategori(this, 'infrastruktur')" data-kategori="infrastruktur">
+                                <div class="cat-icon" style="background:#EFF6FF;color:#2563EB"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg></div>
+                                <div class="cat-label">Infrastruktur</div>
+                            </div>
+                            <div class="category-card" onclick="selectKategori(this, 'fasilitas')" data-kategori="fasilitas">
+                                <div class="cat-icon" style="background:#F5F3FF;color:#8B5CF6"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg></div>
+                                <div class="cat-label">Fasilitas</div>
+                            </div>
+                            <div class="category-card" onclick="selectKategori(this, 'akademik')" data-kategori="akademik">
+                                <div class="cat-icon" style="background:#ECFDF5;color:#10B981"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg></div>
+                                <div class="cat-label">Akademik</div>
+                            </div>
+                            <div class="category-card" onclick="selectKategori(this, 'keamanan')" data-kategori="keamanan">
+                                <div class="cat-icon" style="background:#FEF2F2;color:#EF4444"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div>
+                                <div class="cat-label">Keamanan</div>
+                            </div>
+                            <div class="category-card" onclick="selectKategori(this, 'kebersihan')" data-kategori="kebersihan">
+                                <div class="cat-icon" style="background:#ECFEFF;color:#06B6D4"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"></path><path d="M2 17l10 5 10-5"></path><path d="M2 12l10 5 10-5"></path></svg></div>
+                                <div class="cat-label">Kebersihan</div>
+                            </div>
+                            <div class="category-card" onclick="selectKategori(this, 'lainnya')" data-kategori="lainnya">
+                                <div class="cat-icon" style="background:#F8FAFC;color:#94A3B8"><svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="1"></circle><circle cx="19" cy="12" r="1"></circle><circle cx="5" cy="12" r="1"></circle></svg></div>
+                                <div class="cat-label">Lainnya</div>
+                            </div>
+                        </div>
+                        <input type="hidden" id="lap-kategori" required>
+                        <span id="err-kategori" style="font-size:12px;color:var(--error);display:none;margin-top:8px">Pilih kategori laporan</span>
+                    </div>
+
+                    <!-- Judul -->
+                    <div class="form-group">
+                        <label class="form-label" for="lap-judul">Judul Laporan <span style="color:var(--error)">*</span></label>
+                        <input type="text" id="lap-judul" class="form-input" placeholder="Deskripsikan masalah secara singkat..." required>
+                    </div>
+
+                    <!-- Deskripsi -->
+                    <div class="form-group">
+                        <label class="form-label" for="lap-deskripsi">Deskripsi Lengkap <span style="color:var(--error)">*</span></label>
+                        <textarea id="lap-deskripsi" class="form-input" rows="4" placeholder="Jelaskan masalah secara rinci, waktu kejadian, dampak yang ditimbulkan..." required style="min-height:120px"></textarea>
+                    </div>
+
+                    <!-- Lokasi -->
+                    <div class="form-group">
+                        <label class="form-label" for="lap-lokasi">Lokasi <span style="color:var(--error)">*</span></label>
+                        <input type="text" id="lap-lokasi" class="form-input" placeholder="Contoh: Gedung B Lantai 2, Ruang 205" required>
+                    </div>
+
+                    <!-- Bukti Foto -->
+                    <div class="form-group">
+                        <label class="form-label">Bukti Foto <span style="color:var(--error)">*</span></label>
+                        <div class="upload-area" id="upload-area" onclick="document.getElementById('foto-input').click()" ondragover="handleDragOver(event)" ondrop="handleDrop(event)">
+                            <div id="upload-placeholder">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 12px"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+                                <div style="font-size:14px;font-weight:600;color:var(--text-secondary)">Klik atau seret foto ke sini</div>
+                                <div style="font-size:12px;color:var(--text-tertiary);margin-top:4px">JPG, PNG, WEBP · Maks 5MB · Wajib diisi</div>
+                            </div>
+                        </div>
+                        <div class="upload-preview" id="upload-preview">
+                            <img id="preview-img" src="" alt="Preview">
+                            <button type="button" onclick="clearPhoto()" style="position:absolute;top:8px;right:8px;background:rgba(0,0,0,0.6);color:white;border:none;border-radius:50%;width:28px;height:28px;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:14px">✕</button>
+                        </div>
+                        <input type="file" id="foto-input" accept="image/*" style="display:none" onchange="handleFileSelect(this)">
+                        <span id="err-foto" style="font-size:12px;color:var(--error);display:none;margin-top:4px">Foto bukti wajib dilampirkan</span>
+                    </div>
+
+                    <!-- Anonim Toggle -->
+                    <div class="form-group">
+                        <div style="display:flex;align-items:center;justify-content:space-between;background:var(--bg-secondary);border-radius:var(--radius-md);padding:14px 16px">
+                            <div>
+                                <div style="font-size:14px;font-weight:600;color:var(--text-primary)">Laporkan Secara Anonim</div>
+                                <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">Identitas Anda tidak akan ditampilkan</div>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="lap-anonim">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div style="display:flex;gap:10px;justify-content:flex-end">
+                        <button type="button" onclick="showView('list')" class="btn btn-secondary" id="btn-cancel-laporan">Batal</button>
+                        <button type="submit" class="btn btn-primary ripple" id="btn-submit-laporan">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                            Kirim Laporan
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- === VIEW: DETAIL LAPORAN === -->
+        <div id="view-detail" style="display:none">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+                <button class="btn btn-ghost btn-icon" onclick="showView('list')" id="btn-back-detail"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg></button>
+                <div>
+                    <h2 style="font-size:20px;font-weight:700" id="detail-judul">Laporan</h2>
+                    <div id="detail-tiket-badge"></div>
+                </div>
+                <!-- PDF Buttons (shown only if selesai) -->
+                <div id="pdf-actions" style="display:none;margin-left:auto;display:flex;gap:8px">
+                    <button class="btn btn-outline btn-sm" onclick="previewPDF()" id="btn-preview-pdf">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle></svg>
+                        Lihat PDF
+                    </button>
+                    <button class="btn btn-primary btn-sm" onclick="downloadPDF()" id="btn-download-pdf">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Unduh PDF
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid-2" style="gap:20px;align-items:start">
+                <!-- Left: Info + Stepper + Progress -->
+                <div style="display:flex;flex-direction:column;gap:16px">
+                    <div class="card">
+                        <h3 style="font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text-secondary)">DETAIL LAPORAN</h3>
+                        <div id="detail-info" style="display:flex;flex-direction:column;gap:10px"></div>
+                    </div>
+
+                    <div class="card">
+                        <h3 style="font-size:14px;font-weight:700;margin-bottom:16px;color:var(--text-secondary)">PROGRESS PENANGANAN</h3>
+                        <div id="detail-stepper"></div>
+                    </div>
+
+                    <div class="card" id="detail-foto-card" style="display:none">
+                        <h3 style="font-size:14px;font-weight:700;margin-bottom:12px;color:var(--text-secondary)">BUKTI FOTO</h3>
+                        <img id="detail-foto" src="" alt="Bukti" style="width:100%;border-radius:var(--radius-md);object-fit:cover;max-height:250px">
+                    </div>
+                </div>
+
+                <!-- Right: Chat -->
+                <div>
+                    <div class="card" style="padding:0;overflow:hidden">
+                        <div style="padding:16px 20px;border-bottom:1px solid var(--border)">
+                            <h3 style="font-size:14px;font-weight:700;color:var(--text-secondary)">CHAT DENGAN ADMIN</h3>
+                        </div>
+                        <!-- Chat -->
+                        <div style="display:flex;flex-direction:column">
+                            <div id="chat-messages" class="chat-container" style="max-height:360px;border-radius:0"></div>
+                            <div id="chat-typing" class="typing-indicator" style="padding:6px 16px">
+                                <div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>
+                                <span style="font-size:12px;color:var(--text-tertiary);margin-left:4px">Admin sedang mengetik...</span>
+                            </div>
+                            <div class="chat-input-bar">
+                                <input type="text" id="chat-input" placeholder="Ketik pesan..." style="flex:1;border:1.5px solid var(--border);border-radius:var(--radius-full);padding:10px 16px;font-size:14px;background:var(--bg-secondary);outline:none;transition:border-color 0.2s" autocomplete="off">
+                                <button onclick="sendChat()" class="btn btn-primary" style="border-radius:50%;width:40px;height:40px;padding:0;flex-shrink:0" id="btn-send-chat" title="Kirim">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<!-- PDF Preview Modal -->
+<div id="modal-pdf" class="modal-overlay">
+    <div class="modal-box modal-lg">
+        <div class="modal-header">
+            <h3 style="font-size:18px;font-weight:700">Preview Laporan Penyelesaian</h3>
+            <button class="btn btn-ghost btn-icon" data-close-modal="modal-pdf">✕</button>
+        </div>
+        <div class="modal-body">
+            <div class="pdf-preview" id="pdf-preview-content">
+                <!-- Filled by JS -->
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" data-close-modal="modal-pdf">Tutup</button>
+            <button class="btn btn-primary" onclick="downloadPDF()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                Unduh PDF
+            </button>
+        </div>
+    </div>
+</div>
+
+<div id="toast-container" class="toast-container"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+<script>
+// ── Auth Guard ─────────────────────────────────────────────────
+const user = JSON.parse(localStorage.getItem('sk_user') || 'null');
+if (!user || !localStorage.getItem('sk_token')) window.location.href = 'login.html';
+if (user) document.getElementById('sidebar-name').textContent = user.nama || 'Mahasiswa';
+
+// ── Mock Data ──────────────────────────────────────────────────
+const LAPORAN_DATA = [
+    { id: 1, tiket: 'LPR-2026-0001', kategori: 'Infrastruktur', judul: 'Atap Gedung B Bocor Saat Hujan', deskripsi: 'Atap di lantai 2 Gedung B mengalami kebocoran parah setiap kali hujan turun. Air masuk ke ruang kelas dan merusak peralatan elektronik.', lokasi: 'Gedung B Lantai 2', bukti_foto: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600', is_anonim: false, status: 'diproses', created_at: '2026-07-10T09:00:00Z', updated_at: '2026-07-12T14:00:00Z', progress: [{status:'diterima',komentar:'Laporan diterima dan sedang ditinjau.',date:'10 Jul 2026'},{status:'diproses',komentar:'Tim teknis sedang melakukan inspeksi lapangan.',date:'12 Jul 2026'}] },
+    { id: 2, tiket: 'LPR-2026-0002', kategori: 'Fasilitas', judul: 'AC Ruang Kelas SI-101 Tidak Berfungsi', deskripsi: 'AC di ruang kelas SI-101 sudah tidak berfungsi selama 2 minggu.', lokasi: 'Gedung SI, Ruang 101', bukti_foto: 'https://images.unsplash.com/photo-1631049307264-da0ec9d70304?w=600', is_anonim: false, status: 'selesai', created_at: '2026-07-01T08:00:00Z', updated_at: '2026-07-08T16:00:00Z', progress: [{status:'diterima',komentar:'Laporan diterima.',date:'1 Jul 2026'},{status:'diproses',komentar:'Teknisi dijadwalkan.',date:'3 Jul 2026'},{status:'pengerjaan',komentar:'Teknisi sedang melakukan perbaikan.',date:'5 Jul 2026'},{status:'verifikasi',komentar:'Perbaikan selesai, menunggu verifikasi.',date:'7 Jul 2026'},{status:'selesai',komentar:'AC telah diperbaiki dan berfungsi normal.',date:'8 Jul 2026'}] },
+    { id: 3, tiket: 'LPR-2026-0003', kategori: 'Kebersihan', judul: 'Toilet Lantai 3 Gedung A Kotor dan Berbau', deskripsi: 'Kondisi toilet di lantai 3 Gedung A sangat memprihatinkan.', lokasi: 'Gedung A Lantai 3', bukti_foto: null, is_anonim: true, status: 'menunggu', created_at: '2026-07-13T11:00:00Z', updated_at: '2026-07-13T11:00:00Z', progress: [] },
+];
+const CHAT_DATA = {
+    1: [
+        { sender: 'admin', nama: 'Admin', message: 'Halo Nurhuda, laporan Anda sudah kami terima.', time: '10 Jul, 10:15', is_read: true },
+        { sender: 'mahasiswa', nama: 'Nurhuda', message: 'Terima kasih Pak. Kondisinya sudah cukup parah.', time: '10 Jul, 10:30', is_read: true },
+        { sender: 'admin', nama: 'Admin', message: 'Tim teknis akan inspeksi besok pagi.', time: '10 Jul, 10:45', is_read: true },
+        { sender: 'admin', nama: 'Admin', message: 'Kami akan update perkembangan melalui chat ini.', time: '12 Jul, 14:05', is_read: false },
+    ],
+    2: [
+        { sender: 'admin', nama: 'Admin', message: 'AC dijadwalkan diperbaiki tanggal 5 Juli.', time: '3 Jul, 10:00', is_read: true },
+        { sender: 'admin', nama: 'Admin', message: 'AC sudah diperbaiki dan berfungsi normal!', time: '8 Jul, 16:00', is_read: true },
+    ],
+    3: [],
+};
+let currentLaporanId = null;
+
+// ── Navigation ─────────────────────────────────────────────────
+const views = ['list', 'buat', 'detail'];
+function showView(v) {
+    views.forEach(name => {
+        const el = document.getElementById('view-' + name);
+        if (el) el.style.display = name === v ? 'block' : 'none';
+    });
+    const titleMap = { list: 'Laporan Saya', buat: 'Buat Laporan Baru', detail: 'Detail Laporan' };
+    document.getElementById('page-title').textContent = titleMap[v] || 'Laporan';
+}
+
+// ── Init ───────────────────────────────────────────────────────
+const params = new URLSearchParams(location.search);
+const tabParam = params.get('tab');
+const idParam = params.get('id');
+if (tabParam === 'buat') showView('buat');
+else if (idParam) { openDetail(parseInt(idParam)); }
+else showView('list');
+
+renderLaporan(LAPORAN_DATA);
+
+// ── Render List ────────────────────────────────────────────────
+function renderLaporan(data) {
+    const container = document.getElementById('laporan-items');
+    if (!data.length) {
+        container.innerHTML = '<div class="empty-state"><div class="empty-icon"><svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg></div><h3>Belum Ada Laporan</h3><p>Klik "Buat Laporan" untuk melaporkan masalah di kampus.</p></div>';
+        return;
+    }
+    const statusMap = { menunggu: ['neutral','Menunggu'], diterima: ['primary','Diterima'], diproses: ['warning','Diproses'], pengerjaan: ['purple','Pengerjaan'], verifikasi: ['info','Verifikasi'], selesai: ['success','Selesai'] };
+    container.innerHTML = data.map(l => {
+        const [cls, lbl] = statusMap[l.status] || ['neutral', l.status];
+        return `<div class="card card-hover card-interactive" onclick="openDetail(${l.id})" style="display:flex;align-items:center;gap:16px;padding:16px;cursor:pointer" id="lap-card-${l.id}">
+            <div style="width:44px;height:44px;border-radius:var(--radius-md);background:var(--primary-light);display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px">
+                ${{ infrastruktur:'🏗️', fasilitas:'🖥️', akademik:'📚', keamanan:'🔒', kebersihan:'✨', lainnya:'📋' }[l.kategori?.toLowerCase()] || '📋'}
+            </div>
+            <div style="flex:1;min-width:0">
+                <div style="font-size:15px;font-weight:600;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${l.judul}</div>
+                <div style="font-size:12px;color:var(--text-tertiary);margin-top:3px">${l.tiket} · ${l.kategori} · ${new Date(l.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'short',year:'numeric'})}</div>
+            </div>
+            <span class="badge badge-${cls}">${lbl}</span>
+        </div>`;
+    }).join('');
+}
+
+function filterLaporan(status, btn) {
+    document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    const filtered = status === 'semua' ? LAPORAN_DATA : LAPORAN_DATA.filter(l => l.status === status);
+    renderLaporan(filtered);
+}
+
+// ── Open Detail ────────────────────────────────────────────────
+function openDetail(id) {
+    const laporan = LAPORAN_DATA.find(l => l.id === id);
+    if (!laporan) return;
+    currentLaporanId = id;
+    showView('detail');
+
+    document.getElementById('detail-judul').textContent = laporan.judul;
+    const statusMap = { menunggu: ['neutral','Menunggu'], diterima: ['primary','Diterima'], diproses: ['warning','Diproses'], pengerjaan: ['purple','Pengerjaan'], verifikasi: ['info','Verifikasi'], selesai: ['success','Selesai'] };
+    const [cls, lbl] = statusMap[laporan.status] || ['neutral', laporan.status];
+    document.getElementById('detail-tiket-badge').innerHTML = `<span style="font-size:12px;color:var(--text-secondary)">${laporan.tiket} &nbsp;&bull;&nbsp;</span><span class="badge badge-${cls}">${lbl}</span>`;
+
+    // Info
+    document.getElementById('detail-info').innerHTML = [
+        ['Kategori', laporan.kategori],
+        ['Lokasi', laporan.lokasi],
+        ['Pelapor', laporan.is_anonim ? '🕵️ Anonim' : `Nurhuda · 2407043`],
+        ['Tanggal Dibuat', new Date(laporan.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})],
+        ['Deskripsi', laporan.deskripsi],
+    ].map(([k,v]) => `<div style="display:flex;gap:12px;padding-bottom:10px;border-bottom:1px solid var(--border-light)"><div style="min-width:110px;font-size:13px;font-weight:600;color:var(--text-secondary)">${k}</div><div style="font-size:13px;color:var(--text-primary);flex:1">${v}</div></div>`).join('');
+
+    // Stepper
+    const steps = ['Diterima', 'Diproses', 'Pengerjaan', 'Verifikasi', 'Selesai'];
+    const stepKeys = ['diterima', 'diproses', 'pengerjaan', 'verifikasi', 'selesai'];
+    const currentIdx = stepKeys.indexOf(laporan.status === 'menunggu' ? '' : laporan.status);
+    const stepperHtml = `<div class="stepper">` + steps.map((label, i) => {
+        const isDone = i <= currentIdx;
+        const isActive = i === currentIdx;
+        return `${i > 0 ? `<div class="step-line ${i <= currentIdx ? 'completed' : ''}"></div>` : ''}
+            <div class="step ${isDone ? 'completed' : ''} ${isActive ? 'active' : ''}">
+                <div class="step-circle">${isDone ? '<svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>' : (i+1)}</div>
+                <div class="step-label">${label}</div>
+            </div>`;
+    }).join('') + '</div>';
+
+    // Timeline
+    const timelineHtml = laporan.progress.length === 0
+        ? '<div style="color:var(--text-tertiary);font-size:13px;font-style:italic;padding:8px">Belum ada progres penanganan.</div>'
+        : `<div class="timeline" style="margin-top:16px">${laporan.progress.map((p,i) => `
+            <div class="timeline-item ${i < laporan.progress.length-1 ? 'completed' : ''}">
+                <div class="timeline-dot"></div>
+                <div style="font-size:13px;font-weight:600;color:var(--text-primary)">${{ diterima:'Laporan Diterima', diproses:'Sedang Diproses', pengerjaan:'Dalam Pengerjaan', verifikasi:'Verifikasi', selesai:'Selesai' }[p.status] || p.status}</div>
+                <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">${p.komentar}</div>
+                <div style="font-size:11px;color:var(--text-tertiary);margin-top:2px">${p.date}</div>
+            </div>`).join('')}</div>`;
+    document.getElementById('detail-stepper').innerHTML = stepperHtml + timelineHtml;
+
+    // PDF buttons
+    const pdfDiv = document.getElementById('pdf-actions');
+    pdfDiv.style.display = laporan.status === 'selesai' ? 'flex' : 'none';
+
+    // Foto
+    if (laporan.bukti_foto) {
+        document.getElementById('detail-foto').src = laporan.bukti_foto;
+        document.getElementById('detail-foto-card').style.display = 'block';
+    }
+
+    // Chat
+    loadChat(id);
+}
+
+// ── Chat ───────────────────────────────────────────────────────
+function loadChat(id) {
+    const container = document.getElementById('chat-messages');
+    const msgs = CHAT_DATA[id] || [];
+    container.innerHTML = msgs.length === 0
+        ? '<div style="text-align:center;padding:24px;color:var(--text-tertiary);font-size:13px">Belum ada pesan. Mulai percakapan dengan admin!</div>'
+        : msgs.map(m => {
+            const sent = m.sender === 'mahasiswa';
+            return `<div class="chat-bubble ${sent ? 'sent' : 'received'}">
+                ${!sent ? `<div style="font-size:11px;font-weight:600;margin-bottom:3px;opacity:0.7">${m.nama}</div>` : ''}
+                ${m.message}
+                <div class="chat-meta">
+                    <span>${m.time}</span>
+                    ${sent ? `<span class="chat-status ${m.is_read ? 'read' : ''}">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                            ${m.is_read ? '<polyline points="1 12 5 16 11 10"></polyline><polyline points="9 12 13 16 23 6"></polyline>' : '<polyline points="20 6 9 17 4 12"></polyline>'}
+                        </svg></span>` : ''}
+                </div>
+            </div>`;
+        }).join('');
+    container.scrollTop = container.scrollHeight;
+
+    // Enter to send
+    const input = document.getElementById('chat-input');
+    input.onkeydown = (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChat(); } };
+    input.onfocus = () => input.style.borderColor = 'var(--primary)';
+    input.onblur = () => input.style.borderColor = 'var(--border)';
+}
+
+function sendChat() {
+    const input = document.getElementById('chat-input');
+    const msg = input.value.trim();
+    if (!msg) return;
+    input.value = '';
+    if (!CHAT_DATA[currentLaporanId]) CHAT_DATA[currentLaporanId] = [];
+    const now = new Date().toLocaleTimeString('id-ID', {hour:'2-digit',minute:'2-digit'});
+    CHAT_DATA[currentLaporanId].push({ sender: 'mahasiswa', nama: 'Nurhuda', message: msg, time: now, is_read: false });
+    loadChat(currentLaporanId);
+
+    // Simulate typing
+    setTimeout(() => {
+        document.getElementById('chat-typing').classList.add('active');
+        setTimeout(() => {
+            document.getElementById('chat-typing').classList.remove('active');
+            const replies = ['Baik, kami akan segera tindak lanjuti.', 'Terima kasih atas informasinya.', 'Sudah kami catat. Mohon bersabar.'];
+            CHAT_DATA[currentLaporanId].push({ sender: 'admin', nama: 'Admin', message: replies[Math.floor(Math.random()*replies.length)], time: now, is_read: false });
+            loadChat(currentLaporanId);
+        }, 2000 + Math.random()*1500);
+    }, 400);
+}
+
+// ── Buat Laporan ───────────────────────────────────────────────
+function selectKategori(el, val) {
+    document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    document.getElementById('lap-kategori').value = val;
+    document.getElementById('err-kategori').style.display = 'none';
+}
+
+function handleFileSelect(input) {
+    const file = input.files[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) { showToast('Ukuran file melebihi 5MB', 'error'); return; }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        document.getElementById('preview-img').src = e.target.result;
+        document.getElementById('upload-preview').classList.add('has-file');
+        document.getElementById('upload-placeholder').style.display = 'none';
+        document.getElementById('err-foto').style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+}
+function handleDragOver(e) { e.preventDefault(); document.getElementById('upload-area').classList.add('dragover'); }
+function handleDrop(e) {
+    e.preventDefault();
+    document.getElementById('upload-area').classList.remove('dragover');
+    const file = e.dataTransfer.files[0];
+    if (file && file.type.startsWith('image/')) {
+        const dt = new DataTransfer(); dt.items.add(file);
+        const input = document.getElementById('foto-input');
+        input.files = dt.files;
+        handleFileSelect(input);
+    }
+}
+function clearPhoto() {
+    document.getElementById('foto-input').value = '';
+    document.getElementById('preview-img').src = '';
+    document.getElementById('upload-preview').classList.remove('has-file');
+    document.getElementById('upload-placeholder').style.display = 'block';
+}
+
+async function submitLaporan(e) {
+    e.preventDefault();
+    const kat = document.getElementById('lap-kategori').value;
+    const foto = document.getElementById('foto-input').files[0];
+    let ok = true;
+    if (!kat) { document.getElementById('err-kategori').style.display = 'block'; ok = false; }
+    if (!foto) { document.getElementById('err-foto').style.display = 'block'; ok = false; }
+    if (!ok) return;
+    const btn = document.getElementById('btn-submit-laporan');
+    btn.disabled = true; btn.textContent = 'Mengirim...';
+    await new Promise(r => setTimeout(r, 1000));
+    showToast('Laporan berhasil dikirim! Nomor tiket: LPR-2026-0004', 'success');
+    btn.disabled = false; btn.textContent = 'Kirim Laporan';
+    e.target.reset(); clearPhoto();
+    document.querySelectorAll('.category-card').forEach(c => c.classList.remove('selected'));
+    setTimeout(() => showView('list'), 1500);
+}
+
+// ── PDF ────────────────────────────────────────────────────────
+function getCurrentLaporan() { return LAPORAN_DATA.find(l => l.id === currentLaporanId); }
+function previewPDF() {
+    const laporan = getCurrentLaporan(); if (!laporan) return;
+    const modal = document.getElementById('modal-pdf');
+    document.getElementById('pdf-preview-content').innerHTML = `
+        <div class="pdf-header" style="text-align:center;padding-bottom:20px;border-bottom:2px solid var(--primary);margin-bottom:20px">
+            <div style="font-size:11px;color:var(--text-tertiary);margin-bottom:4px">INSTITUT TEKNOLOGI GARUT</div>
+            <div style="font-size:20px;font-weight:800;color:var(--text-primary)">LAPORAN PENYELESAIAN</div>
+            <div style="font-size:12px;color:var(--text-secondary);margin-top:4px">Sistem Suara Kampus</div>
+        </div>
+        ${[['Nomor Laporan', laporan.tiket],['Nama Pelapor', laporan.is_anonim ? 'Anonim' : 'Nurhuda'],['NIM', laporan.is_anonim ? '(Disembunyikan)' : '2407043'],['Program Studi', laporan.is_anonim ? '(Disembunyikan)' : 'Sistem Informasi'],['Kategori', laporan.kategori],['Lokasi', laporan.lokasi],['Status', 'Selesai ✓'],['Tanggal Dibuat', new Date(laporan.created_at).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})],['Tanggal Selesai', new Date(laporan.updated_at).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'})]]
+            .map(([k,v]) => `<div class="pdf-row"><div class="pdf-label">${k}</div><div class="pdf-value">${v}</div></div>`).join('')}
+        <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border)">
+            <div style="font-size:12px;font-weight:600;color:var(--text-secondary);margin-bottom:6px">DESKRIPSI LAPORAN</div>
+            <p style="font-size:13px;color:var(--text-primary);line-height:1.6">${laporan.deskripsi}</p>
+        </div>
+        <div style="margin-top:24px;text-align:right;padding-top:16px;border-top:1px solid var(--border)">
+            <p style="font-size:12px;color:var(--text-secondary)">Administrator Suara Kampus</p>
+            <div style="width:120px;border-top:1px solid var(--text-primary);margin:24px 0 4px auto;text-align:center">
+                <p style="font-size:12px;font-weight:600">Administrator</p>
+            </div>
+        </div>`;
+    modal.classList.add('active');
+    requestAnimationFrame(() => modal.classList.add('visible'));
+}
+
+function downloadPDF() {
+    const laporan = getCurrentLaporan();
+    if (!laporan || typeof window.jspdf === 'undefined') {
+        showToast('Mengunduh PDF...', 'info');
+        return;
+    }
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.setFontSize(18); doc.setFont('helvetica', 'bold');
+    doc.text('LAPORAN PENYELESAIAN', 105, 20, { align: 'center' });
+    doc.setFontSize(11); doc.setFont('helvetica', 'normal');
+    doc.text('Institut Teknologi Garut — Suara Kampus', 105, 28, { align: 'center' });
+    doc.line(20, 33, 190, 33);
+    const rows = [['Nomor Laporan', laporan.tiket],['Nama Pelapor', laporan.is_anonim ? 'Anonim' : 'Nurhuda'],['NIM', laporan.is_anonim ? '(Disembunyikan)' : '2407043'],['Program Studi', laporan.is_anonim ? '-' : 'Sistem Informasi'],['Kategori', laporan.kategori],['Lokasi', laporan.lokasi],['Status', 'Selesai'],['Tanggal Dibuat', new Date(laporan.created_at).toLocaleDateString('id-ID')],['Tanggal Selesai', new Date(laporan.updated_at).toLocaleDateString('id-ID')]];
+    let y = 42;
+    rows.forEach(([k,v]) => { doc.setFont('helvetica','bold'); doc.text(k + ':', 22, y); doc.setFont('helvetica','normal'); doc.text(String(v||'-'), 80, y); y += 8; });
+    y += 4; doc.line(20, y, 190, y); y += 8;
+    doc.setFont('helvetica','bold'); doc.text('Deskripsi:', 22, y); y += 6;
+    doc.setFont('helvetica','normal');
+    doc.splitTextToSize(laporan.deskripsi, 168).forEach(line => { doc.text(line, 22, y); y += 6; });
+    doc.save(`${laporan.tiket}.pdf`);
+    showToast('PDF berhasil diunduh!', 'success');
+}
+
+// ── Mobile sidebar ─────────────────────────────────────────────
+document.getElementById('hamburger-btn').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.add('open');
+    document.getElementById('sidebar-overlay').classList.add('active');
+});
+document.getElementById('sidebar-overlay').addEventListener('click', () => {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebar-overlay').classList.remove('active');
+});
+
+// ── Modal ──────────────────────────────────────────────────────
+document.addEventListener('click', e => {
+    if (e.target.classList.contains('modal-overlay')) closeModal(e.target.id);
+    if (e.target.dataset.closeModal) closeModal(e.target.dataset.closeModal);
+});
+function closeModal(id) {
+    const m = document.getElementById(id); if (!m) return;
+    m.classList.remove('visible'); setTimeout(() => m.classList.remove('active'), 250);
+}
+
+// ── Toast ──────────────────────────────────────────────────────
+function showToast(msg, type='info') {
+    const icons = { success: '✅', error: '❌', warning: '⚠️', info: 'ℹ️' };
+    const el = document.createElement('div');
+    el.className = 'toast';
+    el.innerHTML = `<span>${icons[type]}</span><span class="toast-msg">${msg}</span><button class="toast-close" onclick="this.closest('.toast').remove()">✕</button>`;
+    document.getElementById('toast-container').appendChild(el);
+    setTimeout(() => { el.classList.add('removing'); setTimeout(() => el.remove(), 300); }, 3500);
+}
+</script>
+</body>
+</html>
