@@ -8,12 +8,27 @@ import uuid
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'suara-kampus-secret-key-2026'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///suara_kampus.db'
+
+# Check if running on Vercel
+IS_VERCEL = os.environ.get('VERCEL') == '1'
+
+if IS_VERCEL:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:////tmp/suara_kampus.db'
+    app.config['UPLOAD_FOLDER'] = '/tmp/uploads'
+else:
+    app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///suara_kampus.db'
+    app.config['UPLOAD_FOLDER'] = 'static/uploads'
+
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
 
 # Ensure upload folder exists
-os.makedirs(os.path.join(app.root_path, app.config['UPLOAD_FOLDER']), exist_ok=True)
+try:
+    if IS_VERCEL:
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    else:
+        os.makedirs(os.path.join(app.root_path, app.config['UPLOAD_FOLDER']), exist_ok=True)
+except OSError:
+    pass
 
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
@@ -560,6 +575,10 @@ def init_db():
         db.session.commit()
         print('Database initialized!')
 
-if __name__ == '__main__':
+if IS_VERCEL:
     init_db()
+
+if __name__ == '__main__':
+    if not IS_VERCEL:
+        init_db()
     app.run(debug=True, host='0.0.0.0', port=5000)
