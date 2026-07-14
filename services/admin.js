@@ -2,7 +2,7 @@
  * SUARA KAMPUS - Admin Service
  */
 
-import API from '../api/config.js';
+import API from './config.js';
 
 const MOCK_MAHASISWA = [
     { id: 1, nama: 'Nurhuda', nim: '2407043', email: '2407043@itg.ac.id', prodi: 'Sistem Informasi', foto: null, created_at: '2026-07-01', laporan_count: 3, aspirasi_count: 2 },

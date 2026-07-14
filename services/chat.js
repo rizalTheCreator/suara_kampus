@@ -4,7 +4,7 @@
  * GET /api/chat | POST /api/chat/send | GET /api/chat/messages
  */
 
-import API from '../api/config.js';
+import API from './config.js';
 
 // ── Mock chat rooms keyed by laporan_id ─────────────────────────
 const MOCK_CHATS = {

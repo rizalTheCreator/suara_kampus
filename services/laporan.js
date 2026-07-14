@@ -3,7 +3,7 @@
  * GET/POST/PUT/DELETE /api/laporan
  */
 
-import API from '../api/config.js';
+import API from './config.js';
 
 // ── Mock Data ───────────────────────────────────────────────────
 const MOCK_LAPORAN = [

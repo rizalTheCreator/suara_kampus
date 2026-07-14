@@ -3,7 +3,7 @@
  * GET /api/notifications
  */
 
-import API from '../api/config.js';
+import API from './config.js';
 
 const MOCK_NOTIFICATIONS = [
     { id: 1, type: 'laporan_update', icon: 'file-check', color: '#2563EB', bg: '#EFF6FF', title: 'Status Laporan Diperbarui', message: 'Laporan LPR-2026-0001 kini berstatus "Diproses"', reference_id: 1, is_read: false, created_at: '2026-07-12T14:00:00Z' },

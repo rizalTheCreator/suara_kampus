@@ -3,7 +3,7 @@
  * POST /api/auth/login | register | logout | change-password | reset-password
  */
 
-import API from '../api/config.js';
+import API from './config.js';
 
 // ── Dummy users (prototype mock) ────────────────────────────────
 const MOCK_USERS = [

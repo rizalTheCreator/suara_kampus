@@ -3,7 +3,7 @@
  * GET/POST /api/aspirasi | like | dislike
  */
 
-import API from '../api/config.js';
+import API from './config.js';
 
 const MOCK_ASPIRASI = [
     {
