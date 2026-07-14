@@ -9,6 +9,26 @@ import uuid
 app = Flask(__name__)
 app.config['SECRET_KEY'] = 'suara-kampus-secret-key-2026'
 
+# Category icons mapping for Vercel (without altering DB schema)
+CATEGORY_ICONS = {
+    'Fasilitas Kelas': '🏫',
+    'Fasilitas Lab': '💻',
+    'Fasilitas Kampus': '🏢',
+    'Himpunan Mahasiswa': '👥',
+    'Layanan TUK': '📝',
+    'Layanan PRODI': '🎓',
+    'Layanan Kampus': '🔧',
+    'Infrastruktur': '🏗️',
+    'Akademik': '📚',
+    'Keamanan': '🛡️',
+    'Lingkungan': '🌳',
+    'Lainnya': '💡'
+}
+
+@app.context_processor
+def inject_icons():
+    return dict(category_icon=lambda name: CATEGORY_ICONS.get(name, '📋'))
+
 # Check if running on Vercel
 IS_VERCEL = os.environ.get('VERCEL') == '1'
 
@@ -619,6 +639,16 @@ def init_db():
             )
             admin.set_password('admin123')
             db.session.add(admin)
+
+        if not User.query.filter_by(nim='2106000').first():
+            student = User(
+                nim='2106000',
+                email='2106000@itg.ac.id',
+                full_name='Mahasiswa Demo',
+                role='student'
+            )
+            student.set_password('student123')
+            db.session.add(student)
 
         db.session.commit()
         print('Database initialized!')

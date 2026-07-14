@@ -42,7 +42,9 @@
         <div style="display:flex;flex-direction:column;gap:12px">
             <div>
                 <div style="font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;margin-bottom:4px">Kategori</div>
-                <div style="font-size:14px;font-weight:500">{{ report.category.name if report.category else 'Umum' }}</div>
+                <div style="font-size:14px;font-weight:500">
+                    {{ category_icon(report.category.name) if report.category else '📋' }} {{ report.category.name if report.category else 'Umum' }}
+                </div>
             </div>
             <div>
                 <div style="font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;margin-bottom:4px">Tanggal Dibuat</div>

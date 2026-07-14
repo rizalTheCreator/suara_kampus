@@ -48,7 +48,7 @@
             </div>
             <h3 style="font-size:15px;font-weight:700;margin-bottom:4px">{{ report.title }}</h3>
             <div style="font-size:12px;color:var(--text-secondary)">
-                {{ report.user.full_name }} · {{ report.category.name if report.category else 'Umum' }} · {{ report.created_at.strftime('%d %b %Y') }}
+                {{ report.user.full_name }} · {{ category_icon(report.category.name) if report.category else '📋' }} {{ report.category.name if report.category else 'Umum' }} · {{ report.created_at.strftime('%d %b %Y') }}
             </div>
             {% if report.description %}
             <p style="font-size:13px;color:var(--text-secondary);margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ report.description }}</p>

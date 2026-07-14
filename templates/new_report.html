@@ -24,7 +24,7 @@
                 <label style="cursor:pointer">
                     <input type="radio" name="category_id" value="{{ cat.id }}" required style="display:none" class="cat-radio">
                     <div class="cat-card" style="border:2px solid var(--border);border-radius:var(--radius-md);padding:14px 10px;text-align:center;transition:all 0.2s;font-size:13px;font-weight:600;color:var(--text-secondary)">
-                        <div style="font-size:22px;margin-bottom:6px">{{ cat.icon or '📋' }}</div>
+                        <div style="font-size:22px;margin-bottom:6px">{{ category_icon(cat.name) }}</div>
                         {{ cat.name }}
                     </div>
                 </label>

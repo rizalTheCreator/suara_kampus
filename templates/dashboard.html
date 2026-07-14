@@ -97,8 +97,8 @@
                 </svg>
             </div>
             <div style="flex:1;min-width:0">
-                <div style="font-size:14px;font-weight:600;color:var(--text-primary)">{{ report.title }}</div>
-                <div style="font-size:12px;color:var(--text-tertiary);margin-top:2px">{{ report.category.name if report.category else 'Umum' }} · {{ report.created_at.strftime('%d %b %Y') }}</div>
+                <h3 style="font-size:15px;font-weight:700;margin-bottom:4px">{{ report.title }}</h3>
+                <div style="font-size:12px;color:var(--text-tertiary);margin-top:2px">{{ category_icon(report.category.name) if report.category else '📋' }} {{ report.category.name if report.category else 'Umum' }} · {{ report.created_at.strftime('%d %b %Y') }}</div>
             </div>
             <span class="badge 
                 {% if report.status == 'Selesai' %}badge-success
