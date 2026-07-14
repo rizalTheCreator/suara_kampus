@@ -160,7 +160,7 @@ def index():
 
     # Get popular aspirations
     popular_aspirations = Aspiration.query.order_by(
-        (Aspiration.likes_count - Aspiration.dislikes_count).desc()
+        Aspiration.likes_count.desc()
     ).limit(3).all()
 
     return render_template('index.html', stats=stats, aspirations=popular_aspirations)
