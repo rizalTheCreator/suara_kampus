@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}Kelola Laporan — Admin Suara Kampus{% endblock %}
+{% block page_title %}Kelola Laporan{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <h2 style="font-size:20px;font-weight:700">Manajemen Laporan</h2>
+    <form method="GET" action="{{ url_for('admin_reports') }}">
+        <input type="text" name="q" placeholder="Cari laporan..." value="{{ request.args.get('q', '') }}" class="form-input" style="width:220px;padding:8px 14px">
+    </form>
+</div>
+
+<div class="filter-bar">
+    <a class="filter-chip {% if status_filter == 'semua' %}active{% endif %}" href="{{ url_for('admin_reports', status='semua') }}">Semua ({{ counts.semua }})</a>
+    <a class="filter-chip {% if status_filter == 'Menunggu' %}active{% endif %}" href="{{ url_for('admin_reports', status='Menunggu') }}">Menunggu ({{ counts.menunggu }})</a>
+    <a class="filter-chip {% if status_filter == 'Diterima' %}active{% endif %}" href="{{ url_for('admin_reports', status='Diterima') }}">Diterima ({{ counts.diterima }})</a>
+    <a class="filter-chip {% if status_filter == 'Diproses' %}active{% endif %}" href="{{ url_for('admin_reports', status='Diproses') }}">Diproses ({{ counts.diproses }})</a>
+    <a class="filter-chip {% if status_filter == 'Selesai' %}active{% endif %}" href="{{ url_for('admin_reports', status='Selesai') }}">Selesai ({{ counts.selesai }})</a>
+    <a class="filter-chip {% if status_filter == 'Ditolak' %}active{% endif %}" href="{{ url_for('admin_reports', status='Ditolak') }}">Ditolak ({{ counts.ditolak }})</a>
+</div>
+
+<div style="display:flex;flex-direction:column;gap:12px">
+    {% for report in reports %}
+    <div class="card card-hover" style="display:flex;align-items:flex-start;gap:16px;padding:18px">
+        <div style="width:44px;height:44px;border-radius:var(--radius-md);background:
+            {% if report.status == 'Selesai' %}var(--success-light)
+            {% elif report.status == 'Diproses' %}var(--warning-light)
+            {% elif report.status == 'Ditolak' %}var(--danger-light)
+            {% else %}var(--primary-light){% endif %};
+            display:flex;align-items:center;justify-content:center;flex-shrink:0">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+                stroke="{% if report.status == 'Selesai' %}var(--success){% elif report.status == 'Diproses' %}var(--warning){% elif report.status == 'Ditolak' %}var(--danger){% else %}var(--primary){% endif %}"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+            </svg>
+        </div>
+        <div style="flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:4px">
+                <span style="font-size:12px;font-weight:600;color:var(--text-tertiary)">{{ report.ticket_number }}</span>
+                <span class="badge 
+                    {% if report.status == 'Selesai' %}badge-success
+                    {% elif report.status == 'Diproses' %}badge-warning
+                    {% elif report.status == 'Ditolak' %}badge-danger
+                    {% elif report.status == 'Menunggu' %}badge-neutral
+                    {% else %}badge-primary{% endif %}">{{ report.status }}</span>
+            </div>
+            <h3 style="font-size:15px;font-weight:700;margin-bottom:4px">{{ report.title }}</h3>
+            <div style="font-size:12px;color:var(--text-secondary)">
+                {{ report.user.full_name }} · {{ report.category.name if report.category else 'Umum' }} · {{ report.created_at.strftime('%d %b %Y') }}
+            </div>
+            {% if report.description %}
+            <p style="font-size:13px;color:var(--text-secondary);margin-top:6px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">{{ report.description }}</p>
+            {% endif %}
+        </div>
+        <div style="display:flex;gap:8px;flex-shrink:0">
+            <a href="{{ url_for('report_detail', report_id=report.id) }}" class="btn btn-outline btn-sm">Lihat Detail</a>
+        </div>
+    </div>
+    {% endfor %}
+    {% if not reports %}
+    <div style="text-align:center;padding:40px;color:var(--text-tertiary)">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 12px;opacity:0.3;display:block"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path></svg>
+        Tidak ada laporan ditemukan.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

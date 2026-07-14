@@ -1,114 +1,128 @@
 {% extends "base.html" %}
 
-{% block title %}{{ report.title }} - Suara Kampus ITG{% endblock %}
+{% block title %}{{ report.title }} — Suara Kampus{% endblock %}
+{% block page_title %}Detail Laporan{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <div class="container">
-        <h1><i class="bi bi-file-earmark-text me-2"></i>Detail Laporan</h1>
-        <p>{{ report.title }}</p>
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+    <a href="{{ url_for('admin_reports') if current_user.role == 'admin' else url_for('dashboard') }}" class="btn btn-ghost btn-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </a>
+    <div>
+        <h2 style="font-size:20px;font-weight:700">{{ report.title }}</h2>
+        <p style="font-size:13px;color:var(--text-secondary)">Tiket: <strong>{{ report.ticket_number }}</strong></p>
     </div>
 </div>
 
-<div class="container">
-    <div class="row">
-        <div class="col-lg-8">
-            <!-- Report Info -->
-            <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div>
-                            <span class="badge bg-light text-dark border mb-2">{{ report.category.name }}</span>
-                            <h4 class="fw-bold">{{ report.title }}</h4>
-                        </div>
-                        {% if report.status == 'Diajukan' %}
-                            <span class="status-badge badge-diajukan">{{ report.status }}</span>
-                        {% elif report.status == 'Diproses' %}
-                            <span class="status-badge badge-diproses">{{ report.status }}</span>
-                        {% elif report.status == 'Selesai' %}
-                            <span class="status-badge badge-selesai">{{ report.status }}</span>
-                        {% else %}
-                            <span class="status-badge badge-ditolak">{{ report.status }}</span>
-                        {% endif %}
-                    </div>
-                    <p class="text-muted">{{ report.description }}</p>
-                    <hr>
-                    <div class="row">
-                        <div class="col-md-6">
-                            <small class="text-muted d-block">Pelapor</small>
-                            <span class="fw-semibold">{{ report.user.full_name }}</span>
-                        </div>
-                        <div class="col-md-6">
-                            <small class="text-muted d-block">Tanggal Pengajuan</small>
-                            <span class="fw-semibold">{{ report.created_at.strftime('%d %B %Y, %H:%M') }}</span>
-                        </div>
-                    </div>
-                </div>
+<!-- Progress Stepper -->
+{% set steps = ['Menunggu', 'Diterima', 'Diproses', 'Selesai'] %}
+{% set step_index = steps.index(report.status) if report.status in steps else 0 %}
+<div class="card" style="margin-bottom:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;position:relative;padding:8px 0">
+        <div style="position:absolute;top:50%;left:0;right:0;height:2px;background:var(--border);z-index:0"></div>
+        <div style="position:absolute;top:50%;left:0;height:2px;background:var(--primary);z-index:1;transition:width 0.5s ease;width:{{ (step_index / (steps|length - 1) * 100)|int }}%"></div>
+        {% for step in steps %}
+        <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;gap:8px">
+            <div style="width:36px;height:36px;border-radius:50%;
+                background:{% if loop.index0 <= step_index %}var(--primary){% else %}var(--border){% endif %};
+                color:{% if loop.index0 <= step_index %}white{% else %}var(--text-tertiary){% endif %};
+                display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;border:3px solid var(--surface)">
+                {% if loop.index0 < step_index %}✓{% else %}{{ loop.index }}{% endif %}
             </div>
-
-            <!-- Timeline -->
-            <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
-                <div class="card-header bg-white border-0 pt-4 px-4">
-                    <h5 class="fw-bold mb-0"><i class="bi bi-clock-history me-2 text-primary"></i>Riwayat Status</h5>
-                </div>
-                <div class="card-body px-4 pb-4">
-                    <div class="timeline">
-                        {% for log in report.report_logs %}
-                        <div class="timeline-item {% if loop.first %}active{% endif %}">
-                            <h4>{{ log.status_to }}</h4>
-                            <p>{{ log.note or 'Status diperbarui' }}</p>
-                            <small class="text-muted">
-                                <i class="bi bi-person me-1"></i>{{ log.changed_by_user.full_name }} &bull; {{ log.created_at.strftime('%d/%m/%Y %H:%M') }}
-                            </small>
-                        </div>
-                        {% endfor %}
-                    </div>
-                </div>
-            </div>
+            <span style="font-size:11px;font-weight:600;color:{% if loop.index0 <= step_index %}var(--primary){% else %}var(--text-tertiary){% endif %}">{{ step }}</span>
         </div>
+        {% endfor %}
+    </div>
+</div>
 
-        <div class="col-lg-4">
-            <!-- Admin Actions -->
-            {% if current_user.role == 'admin' %}
-            <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
-                <div class="card-header bg-white border-0 pt-4 px-4">
-                    <h5 class="fw-bold mb-0"><i class="bi bi-gear me-2 text-primary"></i>Kelola Laporan</h5>
-                </div>
-                <div class="card-body px-4 pb-4">
-                    <form method="POST" action="{{ url_for('update_report_status', report_id=report.id) }}">
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Ubah Status</label>
-                            <select name="status" class="form-control" required>
-                                <option value="Diajukan" {% if report.status == 'Diajukan' %}selected{% endif %}>Diajukan</option>
-                                <option value="Diproses" {% if report.status == 'Diproses' %}selected{% endif %}>Diproses</option>
-                                <option value="Selesai" {% if report.status == 'Selesai' %}selected{% endif %}>Selesai</option>
-                                <option value="Ditolak" {% if report.status == 'Ditolak' %}selected{% endif %}>Ditolak</option>
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Catatan / Tanggapan</label>
-                            <textarea name="note" class="form-control" rows="3" placeholder="Tambahkan catatan untuk mahasiswa..."></textarea>
-                        </div>
-                        <button type="submit" class="btn btn-primary-custom w-100">
-                            <i class="bi bi-check-lg me-2"></i>Simpan Perubahan
-                        </button>
-                    </form>
-                </div>
+<div class="grid-2">
+    <!-- Detail Info -->
+    <div class="card">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:16px">Informasi Laporan</h3>
+        <div style="display:flex;flex-direction:column;gap:12px">
+            <div>
+                <div style="font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;margin-bottom:4px">Kategori</div>
+                <div style="font-size:14px;font-weight:500">{{ report.category.name if report.category else 'Umum' }}</div>
+            </div>
+            <div>
+                <div style="font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;margin-bottom:4px">Tanggal Dibuat</div>
+                <div style="font-size:14px;font-weight:500">{{ report.created_at.strftime('%d %B %Y, %H:%M') }}</div>
+            </div>
+            <div>
+                <div style="font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;margin-bottom:4px">Pelapor</div>
+                <div style="font-size:14px;font-weight:500">{{ 'Anonim' if report.is_anonymous else report.user.full_name }}</div>
+            </div>
+            <div>
+                <div style="font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;margin-bottom:4px">Lokasi</div>
+                <div style="font-size:14px;font-weight:500">{{ report.location or '-' }}</div>
+            </div>
+            {% if report.description %}
+            <div>
+                <div style="font-size:11px;font-weight:600;color:var(--text-tertiary);text-transform:uppercase;margin-bottom:4px">Deskripsi</div>
+                <div style="font-size:14px;line-height:1.6;color:var(--text-secondary)">{{ report.description }}</div>
             </div>
             {% endif %}
+            <div>
+                <span class="badge 
+                    {% if report.status == 'Selesai' %}badge-success
+                    {% elif report.status == 'Diproses' %}badge-warning
+                    {% elif report.status == 'Ditolak' %}badge-danger
+                    {% elif report.status == 'Menunggu' %}badge-neutral
+                    {% else %}badge-primary{% endif %}">{{ report.status }}</span>
+            </div>
+        </div>
+    </div>
 
-            <!-- Chat Preview -->
-            <div class="card border-0 shadow-sm" style="border-radius: 16px;">
-                <div class="card-header bg-white border-0 pt-4 px-4">
-                    <h5 class="fw-bold mb-0"><i class="bi bi-chat-dots me-2 text-primary"></i>Chat</h5>
+    <!-- Actions: Admin side -->
+    <div style="display:flex;flex-direction:column;gap:16px">
+        {% if current_user.role == 'admin' %}
+        <div class="card">
+            <h3 style="font-size:15px;font-weight:700;margin-bottom:16px">Update Status</h3>
+            <form method="POST" action="{{ url_for('update_report_status', report_id=report.id) }}">
+                <div class="form-group">
+                    <label class="form-label">Status Baru</label>
+                    <select name="status" class="form-input" required>
+                        {% for s in ['Menunggu', 'Diterima', 'Diproses', 'Selesai', 'Ditolak'] %}
+                        <option value="{{ s }}" {% if report.status == s %}selected{% endif %}>{{ s }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
-                <div class="card-body px-4 pb-4">
-                    <div class="text-center py-4">
-                        <i class="bi bi-chat-left-text text-muted" style="font-size: 2rem;"></i>
-                        <p class="text-muted small mt-2">Fitur chat real-time akan segera hadir.</p>
+                <div class="form-group">
+                    <label class="form-label">Catatan Admin</label>
+                    <textarea name="admin_note" class="form-input" rows="3" placeholder="Tambahkan catatan atau keterangan...">{{ report.admin_note or '' }}</textarea>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">Simpan Perubahan</button>
+            </form>
+        </div>
+        {% endif %}
+
+        <!-- Chat -->
+        <div class="card">
+            <h3 style="font-size:15px;font-weight:700;margin-bottom:16px">💬 Pesan</h3>
+            <div style="max-height:300px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;margin-bottom:16px" id="chat-container">
+                {% for msg in messages %}
+                <div style="display:flex;gap:10px;{% if msg.user_id == current_user.id %}flex-direction:row-reverse{% endif %}">
+                    <div style="width:32px;height:32px;border-radius:50%;background:{% if msg.user.role == 'admin' %}var(--primary){% else %}var(--success-light){% endif %};color:{% if msg.user.role == 'admin' %}white{% else %}var(--success){% endif %};display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0">
+                        {{ msg.user.full_name[0]|upper }}
+                    </div>
+                    <div style="max-width:75%">
+                        <div style="background:{% if msg.user_id == current_user.id %}var(--primary){% else %}var(--bg-secondary){% endif %};color:{% if msg.user_id == current_user.id %}white{% else %}var(--text-primary){% endif %};padding:10px 14px;border-radius:12px;font-size:13px;line-height:1.5">
+                            {{ msg.message }}
+                        </div>
+                        <div style="font-size:11px;color:var(--text-tertiary);margin-top:3px;{% if msg.user_id == current_user.id %}text-align:right{% endif %}">
+                            {{ msg.created_at.strftime('%d %b, %H:%M') }}
+                        </div>
                     </div>
                 </div>
+                {% endfor %}
+                {% if not messages %}
+                <p style="text-align:center;color:var(--text-tertiary);font-size:13px;padding:20px">Belum ada pesan.</p>
+                {% endif %}
             </div>
+            <form method="POST" action="{{ url_for('send_message', report_id=report.id) }}" style="display:flex;gap:8px">
+                <input type="text" name="message" class="form-input" placeholder="Tulis pesan..." required style="flex:1">
+                <button type="submit" class="btn btn-primary btn-sm">Kirim</button>
+            </form>
         </div>
     </div>
 </div>

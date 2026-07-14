@@ -1,55 +1,124 @@
 {% extends "base.html" %}
 
-{% block title %}Buat Laporan - Suara Kampus ITG{% endblock %}
+{% block title %}Buat Laporan — Suara Kampus{% endblock %}
+{% block page_title %}Buat Laporan Baru{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <div class="container">
-        <h1><i class="bi bi-plus-circle me-2"></i>Buat Laporan Baru</h1>
-        <p>Sampaikan keluhan atau masalah yang kamu temui di kampus</p>
+<div style="display:flex;align-items:center;gap:12px;margin-bottom:24px">
+    <a href="{{ url_for('dashboard') }}" class="btn btn-ghost btn-icon">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
+    </a>
+    <div>
+        <h2 style="font-size:20px;font-weight:700">Buat Laporan Baru</h2>
+        <p style="font-size:13px;color:var(--text-secondary)">Sampaikan masalah yang Anda temukan di lingkungan kampus</p>
     </div>
 </div>
 
-<div class="container">
-    <div class="row justify-content-center">
-        <div class="col-lg-8">
-            <div class="card border-0 shadow-sm" style="border-radius: 16px;">
-                <div class="card-body p-4 p-lg-5">
-                    <form method="POST" action="{{ url_for('new_report') }}">
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Kategori Laporan</label>
-                            <select name="category_id" class="form-control" required>
-                                <option value="" disabled selected>Pilih kategori...</option>
-                                {% for cat in categories %}
-                                <option value="{{ cat.id }}">{{ cat.name }}</option>
-                                {% endfor %}
-                            </select>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Judul Laporan</label>
-                            <input type="text" name="title" class="form-control" placeholder="Contoh: AC Laboratorium tidak berfungsi" required maxlength="200">
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label fw-semibold">Deskripsi Detail</label>
-                            <textarea name="description" class="form-control" rows="5" placeholder="Jelaskan masalah secara detail..." required></textarea>
-                        </div>
-                        <div class="mb-4">
-                            <label class="form-label fw-semibold">Foto Bukti (Opsional)</label>
-                            <input type="file" class="form-control" accept="image/*" disabled>
-                            <small class="text-muted">Fitur upload foto akan segera hadir.</small>
-                        </div>
-                        <div class="d-flex gap-2">
-                            <button type="submit" class="btn btn-primary-custom px-4">
-                                <i class="bi bi-send me-2"></i>Kirim Laporan
-                            </button>
-                            <a href="{{ url_for('dashboard') }}" class="btn btn-outline-secondary rounded-pill px-4">
-                                Batal
-                            </a>
-                        </div>
-                    </form>
-                </div>
+<div class="card" style="max-width:720px">
+    <form method="POST" action="{{ url_for('new_report') }}" enctype="multipart/form-data">
+        <!-- Kategori -->
+        <div class="form-group">
+            <label class="form-label">Kategori Laporan <span style="color:var(--error)">*</span></label>
+            <div class="grid-3" style="gap:10px">
+                {% for cat in categories %}
+                <label style="cursor:pointer">
+                    <input type="radio" name="category_id" value="{{ cat.id }}" required style="display:none" class="cat-radio">
+                    <div class="cat-card" style="border:2px solid var(--border);border-radius:var(--radius-md);padding:14px 10px;text-align:center;transition:all 0.2s;font-size:13px;font-weight:600;color:var(--text-secondary)">
+                        <div style="font-size:22px;margin-bottom:6px">{{ cat.icon or '📋' }}</div>
+                        {{ cat.name }}
+                    </div>
+                </label>
+                {% endfor %}
             </div>
         </div>
-    </div>
+
+        <!-- Judul -->
+        <div class="form-group">
+            <label class="form-label" for="title">Judul Laporan <span style="color:var(--error)">*</span></label>
+            <input type="text" id="title" name="title" class="form-input" placeholder="Contoh: Toilet Lantai 3 Gedung A Kotor" required maxlength="200">
+        </div>
+
+        <!-- Deskripsi -->
+        <div class="form-group">
+            <label class="form-label" for="description">Deskripsi Detail <span style="color:var(--error)">*</span></label>
+            <textarea id="description" name="description" class="form-input" rows="5" placeholder="Jelaskan masalah secara detail: apa yang terjadi, kapan, dan dampaknya..." required minlength="20"></textarea>
+        </div>
+
+        <!-- Lokasi -->
+        <div class="form-group">
+            <label class="form-label" for="location">Lokasi Kejadian</label>
+            <input type="text" id="location" name="location" class="form-input" placeholder="Contoh: Gedung A Lantai 3, Parkiran Timur">
+        </div>
+
+        <!-- Upload Foto -->
+        <div class="form-group">
+            <label class="form-label">Lampiran Foto (opsional)</label>
+            <div style="border:2px dashed var(--border);border-radius:var(--radius-md);padding:32px;text-align:center;cursor:pointer;transition:all 0.2s" id="upload-zone" onclick="document.getElementById('photo').click()">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--text-tertiary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" style="margin:0 auto 8px;display:block"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                <p style="font-size:14px;font-weight:500;color:var(--text-secondary)">Klik untuk upload foto</p>
+                <p style="font-size:12px;color:var(--text-tertiary);margin-top:4px">PNG, JPG, JPEG maks. 5MB</p>
+            </div>
+            <input type="file" id="photo" name="photo" accept="image/*" style="display:none" onchange="previewPhoto(this)">
+            <div id="photo-preview" style="display:none;margin-top:12px">
+                <img id="preview-img" src="" alt="Preview" style="max-width:100%;border-radius:var(--radius-md);max-height:200px;object-fit:cover">
+                <button type="button" onclick="removePhoto()" style="margin-top:8px;font-size:12px;color:var(--danger);cursor:pointer;background:none;border:none">✕ Hapus foto</button>
+            </div>
+        </div>
+
+        <!-- Anonim -->
+        <div class="form-group">
+            <label style="display:flex;align-items:center;gap:10px;cursor:pointer">
+                <input type="checkbox" name="is_anonymous" id="is_anonymous" style="width:18px;height:18px;accent-color:var(--primary)">
+                <div>
+                    <div style="font-size:14px;font-weight:600">Laporkan secara anonim</div>
+                    <div style="font-size:12px;color:var(--text-secondary)">Identitas Anda tidak akan ditampilkan kepada admin</div>
+                </div>
+            </label>
+        </div>
+
+        <div style="display:flex;gap:10px;justify-content:flex-end">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-outline">Batal</a>
+            <button type="submit" class="btn btn-primary">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"></line><polygon points="22 2 15 22 11 13 2 9 22 2"></polygon></svg>
+                Kirim Laporan
+            </button>
+        </div>
+    </form>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function previewPhoto(input) {
+        if (input.files && input.files[0]) {
+            const reader = new FileReader();
+            reader.onload = e => {
+                document.getElementById('preview-img').src = e.target.result;
+                document.getElementById('photo-preview').style.display = 'block';
+                document.getElementById('upload-zone').style.display = 'none';
+            };
+            reader.readAsDataURL(input.files[0]);
+        }
+    }
+    function removePhoto() {
+        document.getElementById('photo').value = '';
+        document.getElementById('photo-preview').style.display = 'none';
+        document.getElementById('upload-zone').style.display = 'block';
+    }
+
+    // Category card selection
+    document.querySelectorAll('.cat-radio').forEach(radio => {
+        radio.addEventListener('change', () => {
+            document.querySelectorAll('.cat-card').forEach(c => {
+                c.style.borderColor = 'var(--border)';
+                c.style.color = 'var(--text-secondary)';
+                c.style.background = '';
+            });
+            const card = radio.nextElementSibling;
+            card.style.borderColor = 'var(--primary)';
+            card.style.color = 'var(--primary)';
+            card.style.background = 'var(--primary-light)';
+        });
+    });
+</script>
 {% endblock %}

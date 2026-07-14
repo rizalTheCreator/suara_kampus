@@ -1,107 +1,124 @@
 {% extends "base.html" %}
 
-{% block title %}Admin Dashboard - Suara Kampus ITG{% endblock %}
+{% block title %}Dashboard Admin — Suara Kampus{% endblock %}
+{% block page_title %}Dashboard Admin{% endblock %}
+
+{% block head %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <div class="container">
-        <h1><i class="bi bi-shield-lock me-2"></i>Admin Dashboard</h1>
-        <p>Panel pengelolaan laporan dan aspirasi mahasiswa</p>
+<!-- Welcome Banner -->
+<div style="background:linear-gradient(135deg, #1E40AF 0%, #7C3AED 100%);border-radius:var(--radius-xl);padding:24px 32px;color:white;margin-bottom:24px;position:relative;overflow:hidden" class="animate-fade-in">
+    <div style="position:absolute;right:-20px;top:-20px;width:120px;height:120px;border-radius:50%;background:rgba(255,255,255,0.07)"></div>
+    <div style="position:relative;z-index:1">
+        <div style="font-size:13px;opacity:0.8">Panel Admin — Institut Teknologi Garut</div>
+        <div style="font-size:22px;font-weight:800;margin-top:4px">Selamat Datang, {{ current_user.full_name }} 👋</div>
+        <div style="font-size:13px;opacity:0.7;margin-top:2px" id="admin-date"></div>
     </div>
 </div>
 
-<div class="container">
-    <!-- Stats Cards -->
-    <div class="row g-4 mb-4">
-        <div class="col-md-3">
-            <div class="card-dashboard">
-                <div class="stat-icon blue"><i class="bi bi-file-earmark-text"></i></div>
-                <h3 class="fw-bold mb-1">{{ total_reports }}</h3>
-                <p class="text-muted mb-0">Total Laporan</p>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card-dashboard">
-                <div class="stat-icon red"><i class="bi bi-hourglass-split"></i></div>
-                <h3 class="fw-bold mb-1">{{ pending_reports }}</h3>
-                <p class="text-muted mb-0">Menunggu</p>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card-dashboard">
-                <div class="stat-icon orange"><i class="bi bi-arrow-repeat"></i></div>
-                <h3 class="fw-bold mb-1">{{ processing_reports }}</h3>
-                <p class="text-muted mb-0">Diproses</p>
-            </div>
-        </div>
-        <div class="col-md-3">
-            <div class="card-dashboard">
-                <div class="stat-icon green"><i class="bi bi-check-circle"></i></div>
-                <h3 class="fw-bold mb-1">{{ completed_reports }}</h3>
-                <p class="text-muted mb-0">Selesai</p>
-            </div>
+<!-- Stats Grid -->
+<div style="display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px" class="animate-fade-in stagger-1">
+    <div class="stat-card">
+        <div class="stat-icon" style="background:#EFF6FF"><span style="font-size:20px">👥</span></div>
+        <div><div class="stat-value">{{ stats.total_students }}</div><div class="stat-label">Total Mahasiswa</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:#FEF2F2"><span style="font-size:20px">📋</span></div>
+        <div><div class="stat-value">{{ stats.total_reports }}</div><div class="stat-label">Total Laporan</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:#F5F3FF"><span style="font-size:20px">💡</span></div>
+        <div><div class="stat-value">{{ stats.total_aspirations }}</div><div class="stat-label">Total Aspirasi</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:#FFFBEB"><span style="font-size:20px">⏳</span></div>
+        <div><div class="stat-value">{{ stats.pending_reports }}</div><div class="stat-label">Laporan Aktif</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:#ECFDF5"><span style="font-size:20px">✅</span></div>
+        <div><div class="stat-value">{{ stats.completed_reports }}</div><div class="stat-label">Laporan Selesai</div></div>
+    </div>
+    <div class="stat-card">
+        <div class="stat-icon" style="background:#EFF6FF"><span style="font-size:20px">🔥</span></div>
+        <div><div class="stat-value">{{ stats.top_aspiration_likes }}</div><div class="stat-label">Like Aspirasi Terbanyak</div></div>
+    </div>
+</div>
+
+<!-- Charts -->
+<div class="grid-2" style="margin-bottom:24px">
+    <div class="card animate-fade-in stagger-2">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:16px">Laporan per Kategori</h3>
+        <canvas id="chart-kategori" height="200"></canvas>
+    </div>
+    <div class="card animate-fade-in stagger-3">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:16px">Tren Bulanan</h3>
+        <canvas id="chart-tren" height="200"></canvas>
+    </div>
+</div>
+
+<!-- Quick Actions + Recent -->
+<div class="grid-2" style="margin-bottom:24px">
+    <div class="card animate-fade-in stagger-4">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:16px">Aksi Cepat</h3>
+        <div style="display:flex;flex-direction:column;gap:10px">
+            <a href="{{ url_for('admin_reports') }}" class="btn btn-primary" style="justify-content:center">📋 Kelola Laporan</a>
+            <a href="{{ url_for('admin_aspirations') }}" class="btn btn-outline" style="justify-content:center">💡 Kelola Aspirasi</a>
+            <a href="{{ url_for('admin_users') }}" class="btn btn-ghost" style="justify-content:center">👥 Data Mahasiswa</a>
         </div>
     </div>
-
-    <!-- Recent Reports Table -->
-    <div class="card border-0 shadow-sm" style="border-radius: 16px;">
-        <div class="card-header bg-white border-0 pt-4 px-4">
-            <h5 class="fw-bold mb-0"><i class="bi bi-list-ul me-2 text-primary"></i>Semua Laporan Masuk</h5>
-        </div>
-        <div class="card-body px-4 pb-4">
-            <div class="table-responsive">
-                <table class="table table-hover align-middle">
-                    <thead class="table-light">
-                        <tr>
-                            <th>Pelapor</th>
-                            <th>Judul</th>
-                            <th>Kategori</th>
-                            <th>Status</th>
-                            <th>Tanggal</th>
-                            <th>Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for report in recent_reports %}
-                        <tr>
-                            <td>
-                                <div class="d-flex align-items-center">
-                                    <div class="rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-2" style="width:32px;height:32px;font-size:0.8rem;">
-                                        {{ report.user.full_name[0] }}
-                                    </div>
-                                    <div>
-                                        <div class="fw-semibold small">{{ report.user.full_name }}</div>
-                                        <small class="text-muted">{{ report.user.nim }}</small>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>
-                                <div class="fw-semibold small">{{ report.title }}</div>
-                            </td>
-                            <td><span class="badge bg-light text-dark border">{{ report.category.name }}</span></td>
-                            <td>
-                                {% if report.status == 'Diajukan' %}
-                                    <span class="status-badge badge-diajukan">{{ report.status }}</span>
-                                {% elif report.status == 'Diproses' %}
-                                    <span class="status-badge badge-diproses">{{ report.status }}</span>
-                                {% elif report.status == 'Selesai' %}
-                                    <span class="status-badge badge-selesai">{{ report.status }}</span>
-                                {% else %}
-                                    <span class="status-badge badge-ditolak">{{ report.status }}</span>
-                                {% endif %}
-                            </td>
-                            <td><small class="text-muted">{{ report.created_at.strftime('%d/%m/%Y %H:%M') }}</small></td>
-                            <td>
-                                <a href="{{ url_for('report_detail', report_id=report.id) }}" class="btn btn-sm btn-primary-custom">
-                                    <i class="bi bi-eye me-1"></i>Kelola
-                                </a>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+    <div class="card animate-fade-in stagger-5">
+        <h3 style="font-size:15px;font-weight:700;margin-bottom:16px">Aktivitas Terbaru</h3>
+        <div class="timeline">
+            {% for report in recent_reports %}
+            <div class="timeline-item {% if report.status == 'Selesai' %}completed{% endif %}">
+                <div class="timeline-dot"></div>
+                <div style="font-size:13px;font-weight:600">Laporan: {{ report.status }}</div>
+                <div style="font-size:12px;color:var(--text-secondary);margin-top:2px">{{ report.title }}</div>
+                <div style="font-size:11px;color:var(--text-tertiary)">{{ report.created_at.strftime('%d %b %Y') }}</div>
             </div>
+            {% endfor %}
+            {% if not recent_reports %}
+            <p style="font-size:13px;color:var(--text-tertiary)">Belum ada aktivitas.</p>
+            {% endif %}
         </div>
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    document.getElementById('admin-date').textContent = new Date().toLocaleDateString('id-ID', {weekday:'long',day:'numeric',month:'long',year:'numeric'});
+
+    // Chart data from server
+    const categoryLabels = {{ chart_categories | tojson }};
+    const categoryData = {{ chart_category_data | tojson }};
+    const trendLabels = {{ chart_months | tojson }};
+    const trendReports = {{ chart_report_trend | tojson }};
+    const trendAspirations = {{ chart_aspiration_trend | tojson }};
+
+    const ctxBar = document.getElementById('chart-kategori').getContext('2d');
+    new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+            labels: categoryLabels,
+            datasets: [{ label: 'Laporan', data: categoryData, backgroundColor: ['#2563EB','#8B5CF6','#10B981','#EF4444','#06B6D4','#94A3B8'], borderRadius: 8, borderWidth: 0 }]
+        },
+        options: { responsive: true, plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true, grid: { color: '#F1F5F9' } }, x: { grid: { display: false } } } }
+    });
+
+    const ctxLine = document.getElementById('chart-tren').getContext('2d');
+    new Chart(ctxLine, {
+        type: 'line',
+        data: {
+            labels: trendLabels,
+            datasets: [
+                { label: 'Laporan', data: trendReports, borderColor: '#2563EB', backgroundColor: 'rgba(37,99,235,0.1)', tension: 0.4, fill: true, borderWidth: 2, pointBackgroundColor: '#2563EB' },
+                { label: 'Aspirasi', data: trendAspirations, borderColor: '#8B5CF6', backgroundColor: 'rgba(139,92,246,0.1)', tension: 0.4, fill: true, borderWidth: 2, pointBackgroundColor: '#8B5CF6' }
+            ]
+        },
+        options: { responsive: true, plugins: { legend: { position: 'top' } }, scales: { y: { beginAtZero: true, grid: { color: '#F1F5F9' } }, x: { grid: { display: false } } } }
+    });
+</script>
 {% endblock %}

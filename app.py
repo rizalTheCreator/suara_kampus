@@ -27,8 +27,8 @@ try:
         os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
     else:
         os.makedirs(os.path.join(app.root_path, app.config['UPLOAD_FOLDER']), exist_ok=True)
-except OSError:
-    pass
+except Exception as e:
+    print(f"Failed to create upload folder: {e}")
 
 db = SQLAlchemy(app)
 login_manager = LoginManager(app)
@@ -71,30 +71,31 @@ class Report(db.Model):
     __tablename__ = 'reports'
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
-    category_id = db.Column(db.String(36), db.ForeignKey('categories.id'), nullable=False)
+    category_id = db.Column(db.String(36), db.ForeignKey('categories.id'), nullable=True)
     title = db.Column(db.String(200), nullable=False)
     description = db.Column(db.Text, nullable=False)
+    location = db.Column(db.String(200))
     photo_url = db.Column(db.String(500))
-    status = db.Column(db.String(50), default='Diajukan')  # Diajukan, Diproses, Selesai, Ditolak
+    is_anonymous = db.Column(db.Boolean, default=False)
+    admin_note = db.Column(db.Text)
+    ticket_number = db.Column(db.String(50))
+    status = db.Column(db.String(50), default='Menunggu')  # Menunggu, Diterima, Diproses, Selesai, Ditolak
     is_lecturer_report = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
-    lecturer_report = db.relationship('LecturerReport', backref='report', uselist=False, lazy=True)
     report_logs = db.relationship('ReportLog', backref='report', lazy=True, order_by='ReportLog.created_at.desc()')
-    chats = db.relationship('Chat', backref='report', lazy=True, order_by='Chat.sent_at.asc()')
-    pdf_report = db.relationship('PdfReport', backref='report', uselist=False, lazy=True)
+    messages = db.relationship('Message', backref='report', lazy=True, order_by='Message.created_at.asc()')
 
-class LecturerReport(db.Model):
-    __tablename__ = 'lecturer_reports'
+class Message(db.Model):
+    __tablename__ = 'messages'
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    report_id = db.Column(db.String(36), db.ForeignKey('reports.id'), unique=True)
-    lecturer_name = db.Column(db.String(100), nullable=False)
-    course = db.Column(db.String(100), nullable=False)
-    class_name = db.Column(db.String(50), nullable=False)
-    semester = db.Column(db.Integer, nullable=False)
-    impact = db.Column(db.Text, nullable=False)
+    report_id = db.Column(db.String(36), db.ForeignKey('reports.id'), nullable=False)
+    user_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
+    message = db.Column(db.Text, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
+
+    user = db.relationship('User', foreign_keys=[user_id])
 
 class ReportLog(db.Model):
     __tablename__ = 'report_logs'
@@ -114,8 +115,9 @@ class Aspiration(db.Model):
     user_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
     content = db.Column(db.Text, nullable=False)
     category = db.Column(db.String(50))
+    tags = db.Column(db.String(200))
+    image_path = db.Column(db.String(500))
     likes_count = db.Column(db.Integer, default=0)
-    dislikes_count = db.Column(db.Integer, default=0)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     votes = db.relationship('AspirationVote', backref='aspiration', lazy=True)
@@ -125,39 +127,19 @@ class AspirationVote(db.Model):
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     aspiration_id = db.Column(db.String(36), db.ForeignKey('aspirations.id'), nullable=False)
     user_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
-    vote_type = db.Column(db.String(10), nullable=False)  # like, dislike
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     __table_args__ = (db.UniqueConstraint('aspiration_id', 'user_id', name='unique_aspiration_vote'),)
-
-class Chat(db.Model):
-    __tablename__ = 'chats'
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    report_id = db.Column(db.String(36), db.ForeignKey('reports.id'), nullable=False)
-    sender_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
-    message = db.Column(db.Text, nullable=False)
-    is_read = db.Column(db.Boolean, default=False)
-    sent_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-    sender = db.relationship('User', foreign_keys=[sender_id])
 
 class Notification(db.Model):
     __tablename__ = 'notifications'
     id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     user_id = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
-    type = db.Column(db.String(50), nullable=False)  # status_update, new_chat, pdf_ready
+    type = db.Column(db.String(50), nullable=False)
     title = db.Column(db.String(200), nullable=False)
     message = db.Column(db.Text, nullable=False)
     is_read = db.Column(db.Boolean, default=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-
-class PdfReport(db.Model):
-    __tablename__ = 'pdf_reports'
-    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    report_id = db.Column(db.String(36), db.ForeignKey('reports.id'), nullable=False)
-    file_url = db.Column(db.String(500), nullable=False)
-    generated_by = db.Column(db.String(36), db.ForeignKey('users.id'), nullable=False)
-    generated_at = db.Column(db.DateTime, default=datetime.utcnow)
 
 # ==================== LOGIN MANAGER ====================
 
@@ -288,18 +270,39 @@ def admin_dashboard():
         return redirect(url_for('dashboard'))
 
     total_reports = Report.query.count()
-    pending_reports = Report.query.filter_by(status='Diajukan').count()
-    processing_reports = Report.query.filter_by(status='Diproses').count()
+    total_students = User.query.filter_by(role='student').count()
+    total_aspirations = Aspiration.query.count()
+    pending_reports = Report.query.filter(Report.status.in_(['Menunggu', 'Diterima'])).count()
     completed_reports = Report.query.filter_by(status='Selesai').count()
+    top_asp = Aspiration.query.order_by(Aspiration.likes_count.desc()).first()
+    top_aspiration_likes = top_asp.likes_count if top_asp else 0
 
-    recent_reports = Report.query.order_by(Report.created_at.desc()).limit(10).all()
+    recent_reports = Report.query.order_by(Report.created_at.desc()).limit(5).all()
+
+    # Chart data
+    categories = Category.query.all()
+    chart_categories = [c.name for c in categories]
+    chart_category_data = [Report.query.filter_by(category_id=c.id).count() for c in categories]
+
+    from datetime import date
+    months = ['Jan','Feb','Mar','Apr','Mei','Jun','Jul','Agu','Sep','Okt','Nov','Des']
+    current_month = date.today().month
+    chart_months = months[max(0, current_month-6):current_month]
+    chart_report_trend = [Report.query.filter(db.extract('month', Report.created_at) == (current_month - 5 + i)).count() for i in range(6)]
+    chart_aspiration_trend = [Aspiration.query.filter(db.extract('month', Aspiration.created_at) == (current_month - 5 + i)).count() for i in range(6)]
+
+    stats = dict(total_students=total_students, total_reports=total_reports,
+                 total_aspirations=total_aspirations, pending_reports=pending_reports,
+                 completed_reports=completed_reports, top_aspiration_likes=top_aspiration_likes)
 
     return render_template('admin_dashboard.html',
-                         total_reports=total_reports,
-                         pending_reports=pending_reports,
-                         processing_reports=processing_reports,
-                         completed_reports=completed_reports,
-                         recent_reports=recent_reports)
+                         stats=stats,
+                         recent_reports=recent_reports,
+                         chart_categories=chart_categories,
+                         chart_category_data=chart_category_data,
+                         chart_months=chart_months,
+                         chart_report_trend=chart_report_trend,
+                         chart_aspiration_trend=chart_aspiration_trend)
 
 @app.route('/reports/new', methods=['GET', 'POST'])
 @login_required
@@ -308,46 +311,36 @@ def new_report():
         flash('Hanya mahasiswa yang dapat membuat laporan.', 'warning')
         return redirect(url_for('dashboard'))
 
-    # Anti-spam: max 2 reports per day
-    today = datetime.utcnow().date()
-    today_reports = Report.query.filter(
-        Report.user_id == current_user.id,
-        db.func.date(Report.created_at) == today
-    ).count()
-
-    if today_reports >= 2:
-        flash('Batas 2 laporan per hari telah tercapai. Coba lagi besok.', 'warning')
-        return redirect(url_for('dashboard'))
-
     categories = Category.query.all()
 
     if request.method == 'POST':
         title = request.form.get('title', '').strip()
         description = request.form.get('description', '').strip()
-        category_id = request.form.get('category_id')
+        category_id = request.form.get('category_id') or None
+        location = request.form.get('location', '').strip()
+        is_anonymous = 'is_anonymous' in request.form
 
-        # Check for duplicate (80% similarity)
-        recent_user_reports = Report.query.filter_by(user_id=current_user.id).order_by(Report.created_at.desc()).limit(5).all()
-        for recent in recent_user_reports:
-            if title.lower() in recent.title.lower() or recent.title.lower() in title.lower():
-                flash('Laporan serupa terdeteksi. Mohon periksa kembali.', 'warning')
-                return redirect(url_for('new_report'))
+        # Generate ticket number
+        count = Report.query.count() + 1
+        ticket = f"LPR-{datetime.utcnow().year}-{count:04d}"
 
         report = Report(
             user_id=current_user.id,
             category_id=category_id,
             title=title,
             description=description,
-            status='Diajukan'
+            location=location,
+            is_anonymous=is_anonymous,
+            ticket_number=ticket,
+            status='Menunggu'
         )
 
         db.session.add(report)
         db.session.commit()
 
-        # Create initial log
         log = ReportLog(
             report_id=report.id,
-            status_to='Diajukan',
+            status_to='Menunggu',
             changed_by=current_user.id,
             note='Laporan diajukan oleh mahasiswa'
         )
@@ -364,28 +357,27 @@ def new_report():
 def report_detail(report_id):
     report = Report.query.get_or_404(report_id)
 
-    # Check permission
     if current_user.role == 'student' and report.user_id != current_user.id:
         flash('Akses ditolak.', 'danger')
         return redirect(url_for('dashboard'))
 
-    return render_template('report_detail.html', report=report)
+    messages = Message.query.filter_by(report_id=report_id).order_by(Message.created_at.asc()).all()
+    return render_template('report_detail.html', report=report, messages=messages)
 
 @app.route('/reports/<report_id>/update_status', methods=['POST'])
 @login_required
 def update_report_status(report_id):
     if current_user.role != 'admin':
-        return jsonify({'error': 'Unauthorized'}), 403
+        flash('Akses ditolak.', 'danger')
+        return redirect(url_for('dashboard'))
 
     report = Report.query.get_or_404(report_id)
     new_status = request.form.get('status')
-    note = request.form.get('note', '')
-
-    if new_status not in ['Diajukan', 'Diproses', 'Selesai', 'Ditolak']:
-        return jsonify({'error': 'Invalid status'}), 400
+    admin_note = request.form.get('admin_note', '')
 
     old_status = report.status
     report.status = new_status
+    report.admin_note = admin_note
     report.updated_at = datetime.utcnow()
 
     log = ReportLog(
@@ -393,15 +385,14 @@ def update_report_status(report_id):
         status_from=old_status,
         status_to=new_status,
         changed_by=current_user.id,
-        note=note
+        note=admin_note
     )
 
-    # Create notification for student
     notification = Notification(
         user_id=report.user_id,
         type='status_update',
         title='Status Laporan Diubah',
-        message=f'Status laporan "{report.title}" berubah dari {old_status} menjadi {new_status}'
+        message=f'Status laporan "{report.title}" berubah dari {old_status} menjadi {new_status}.'
     )
 
     db.session.add(log)
@@ -411,39 +402,130 @@ def update_report_status(report_id):
     flash(f'Status laporan diubah menjadi {new_status}', 'success')
     return redirect(url_for('report_detail', report_id=report_id))
 
+@app.route('/reports/<report_id>/messages', methods=['POST'])
+@login_required
+def send_message(report_id):
+    report = Report.query.get_or_404(report_id)
+    if current_user.role == 'student' and report.user_id != current_user.id:
+        flash('Akses ditolak.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    message_text = request.form.get('message', '').strip()
+    if message_text:
+        msg = Message(
+            report_id=report_id,
+            user_id=current_user.id,
+            message=message_text
+        )
+        db.session.add(msg)
+        db.session.commit()
+
+    return redirect(url_for('report_detail', report_id=report_id))
+
+@app.route('/admin/reports')
+@login_required
+def admin_reports():
+    if current_user.role != 'admin':
+        flash('Akses ditolak.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    status_filter = request.args.get('status', 'semua')
+    q = request.args.get('q', '')
+
+    query = Report.query
+    if q:
+        query = query.filter(Report.title.ilike(f'%{q}%'))
+    if status_filter != 'semua':
+        query = query.filter_by(status=status_filter)
+
+    reports = query.order_by(Report.created_at.desc()).all()
+
+    counts = {
+        'semua': Report.query.count(),
+        'menunggu': Report.query.filter_by(status='Menunggu').count(),
+        'diterima': Report.query.filter_by(status='Diterima').count(),
+        'diproses': Report.query.filter_by(status='Diproses').count(),
+        'selesai': Report.query.filter_by(status='Selesai').count(),
+        'ditolak': Report.query.filter_by(status='Ditolak').count(),
+    }
+
+    return render_template('admin_reports.html', reports=reports, counts=counts, status_filter=status_filter)
+
+@app.route('/admin/users')
+@login_required
+def admin_users():
+    if current_user.role != 'admin':
+        flash('Akses ditolak.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    q = request.args.get('q', '')
+    query = User.query.filter_by(role='student')
+    if q:
+        query = query.filter(db.or_(User.full_name.ilike(f'%{q}%'), User.nim.ilike(f'%{q}%')))
+
+    users = query.order_by(User.created_at.desc()).all()
+    return render_template('admin_users.html', users=users)
+
+@app.route('/admin/users/<user_id>/toggle', methods=['POST'])
+@login_required
+def toggle_user_active(user_id):
+    if current_user.role != 'admin':
+        flash('Akses ditolak.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    user = User.query.get_or_404(user_id)
+    user.is_active = not user.is_active
+    db.session.commit()
+    flash(f'Status pengguna {user.full_name} diubah.', 'success')
+    return redirect(url_for('admin_users'))
+
+@app.route('/admin/aspirations')
+@login_required
+def admin_aspirations():
+    if current_user.role != 'admin':
+        flash('Akses ditolak.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    aspirations = Aspiration.query.order_by(Aspiration.created_at.desc()).all()
+    return render_template('admin_aspirations.html', aspirations=aspirations)
+
+@app.route('/admin/aspirations/<aspiration_id>/delete', methods=['POST'])
+@login_required
+def delete_aspiration(aspiration_id):
+    if current_user.role != 'admin':
+        flash('Akses ditolak.', 'danger')
+        return redirect(url_for('dashboard'))
+
+    asp = Aspiration.query.get_or_404(aspiration_id)
+    AspirationVote.query.filter_by(aspiration_id=aspiration_id).delete()
+    db.session.delete(asp)
+    db.session.commit()
+    flash('Aspirasi dihapus.', 'success')
+    return redirect(url_for('admin_aspirations'))
+
 @app.route('/aspirations')
 def aspirations():
-    sort = request.args.get('sort', 'popular')
+    sort_by = request.args.get('sort', '')
 
-    if sort == 'popular':
-        aspirations = Aspiration.query.order_by(
-            (Aspiration.likes_count - Aspiration.dislikes_count).desc()
-        ).all()
+    if sort_by == 'likes':
+        asps = Aspiration.query.order_by(Aspiration.likes_count.desc()).all()
+    elif sort_by == 'newest':
+        asps = Aspiration.query.order_by(Aspiration.created_at.desc()).all()
     else:
-        aspirations = Aspiration.query.order_by(Aspiration.created_at.desc()).all()
+        asps = Aspiration.query.order_by(Aspiration.likes_count.desc()).all()
 
-    return render_template('aspirations.html', aspirations=aspirations, sort=sort)
+    liked_ids = set()
+    if current_user.is_authenticated:
+        liked_ids = {v.aspiration_id for v in AspirationVote.query.filter_by(user_id=current_user.id).all()}
 
-@app.route('/aspirations/new', methods=['POST'])
+    return render_template('aspirations.html', aspirations=asps, sort_by=sort_by, liked_ids=liked_ids)
+
+@app.route('/aspirations/create', methods=['POST'])
 @login_required
-def new_aspiration():
-    if current_user.role != 'student':
-        flash('Hanya mahasiswa yang dapat membuat aspirasi.', 'warning')
-        return redirect(url_for('aspirations'))
-
-    # Anti-spam: max 2 aspirations per day
-    today = datetime.utcnow().date()
-    today_aspirations = Aspiration.query.filter(
-        Aspiration.user_id == current_user.id,
-        db.func.date(Aspiration.created_at) == today
-    ).count()
-
-    if today_aspirations >= 2:
-        flash('Batas 2 aspirasi per hari telah tercapai.', 'warning')
-        return redirect(url_for('aspirations'))
-
+def create_aspiration():
     content = request.form.get('content', '').strip()
     category = request.form.get('category', '')
+    tags = request.form.get('tags', '')
 
     if not content:
         flash('Konten aspirasi tidak boleh kosong.', 'danger')
@@ -452,7 +534,8 @@ def new_aspiration():
     aspiration = Aspiration(
         user_id=current_user.id,
         content=content,
-        category=category
+        category=category,
+        tags=tags
     )
 
     db.session.add(aspiration)
@@ -461,70 +544,37 @@ def new_aspiration():
     flash('Aspirasi berhasil dipublikasikan!', 'success')
     return redirect(url_for('aspirations'))
 
-@app.route('/aspirations/<aspiration_id>/vote', methods=['POST'])
+@app.route('/aspirations/<aspiration_id>/like', methods=['POST'])
 @login_required
-def vote_aspiration(aspiration_id):
-    vote_type = request.form.get('vote_type')
-
-    if vote_type not in ['like', 'dislike']:
-        return jsonify({'error': 'Invalid vote type'}), 400
-
-    existing_vote = AspirationVote.query.filter_by(
-        aspiration_id=aspiration_id,
-        user_id=current_user.id
-    ).first()
-
+def like_aspiration(aspiration_id):
     aspiration = Aspiration.query.get_or_404(aspiration_id)
+    existing = AspirationVote.query.filter_by(aspiration_id=aspiration_id, user_id=current_user.id).first()
 
-    if existing_vote:
-        if existing_vote.vote_type == vote_type:
-            # Remove vote (toggle off)
-            db.session.delete(existing_vote)
-            if vote_type == 'like':
-                aspiration.likes_count -= 1
-            else:
-                aspiration.dislikes_count -= 1
-        else:
-            # Change vote
-            if existing_vote.vote_type == 'like':
-                aspiration.likes_count -= 1
-                aspiration.dislikes_count += 1
-            else:
-                aspiration.dislikes_count -= 1
-                aspiration.likes_count += 1
-            existing_vote.vote_type = vote_type
+    if existing:
+        # Toggle off
+        db.session.delete(existing)
+        aspiration.likes_count = max(0, aspiration.likes_count - 1)
     else:
-        # New vote
-        vote = AspirationVote(
-            aspiration_id=aspiration_id,
-            user_id=current_user.id,
-            vote_type=vote_type
-        )
+        vote = AspirationVote(aspiration_id=aspiration_id, user_id=current_user.id)
         db.session.add(vote)
-        if vote_type == 'like':
-            aspiration.likes_count += 1
-        else:
-            aspiration.dislikes_count += 1
+        aspiration.likes_count += 1
 
     db.session.commit()
-
-    return jsonify({
-        'likes': aspiration.likes_count,
-        'dislikes': aspiration.dislikes_count
-    })
+    return redirect(url_for('aspirations'))
 
 @app.route('/notifications')
 @login_required
 def notifications():
     notifs = Notification.query.filter_by(user_id=current_user.id).order_by(Notification.created_at.desc()).all()
-
-    # Mark all as read
-    for n in notifs:
-        if not n.is_read:
-            n.is_read = True
-    db.session.commit()
-
     return render_template('notifications.html', notifications=notifs)
+
+@app.route('/notifications/mark_all_read', methods=['POST'])
+@login_required
+def mark_all_read():
+    Notification.query.filter_by(user_id=current_user.id, is_read=False).update({'is_read': True})
+    db.session.commit()
+    flash('Semua notifikasi ditandai dibaca.', 'success')
+    return redirect(url_for('notifications'))
 
 @app.route('/api/notifications/unread')
 @login_required
@@ -548,7 +598,6 @@ def init_db():
     with app.app_context():
         db.create_all()
 
-        # Create default categories
         if not Category.query.first():
             categories = [
                 Category(name='Fasilitas Kelas', description='Keluhan terkait fasilitas ruang kelas'),
@@ -561,7 +610,6 @@ def init_db():
             ]
             db.session.add_all(categories)
 
-        # Create default admin
         if not User.query.filter_by(role='admin').first():
             admin = User(
                 nim='ADMIN001',
@@ -576,7 +624,10 @@ def init_db():
         print('Database initialized!')
 
 if IS_VERCEL:
-    init_db()
+    try:
+        init_db()
+    except Exception as e:
+        print(f"Failed to initialize database: {e}")
 
 if __name__ == '__main__':
     if not IS_VERCEL:

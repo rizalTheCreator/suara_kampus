@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}Kelola Aspirasi — Admin Suara Kampus{% endblock %}
+{% block page_title %}Kelola Aspirasi{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <h2 style="font-size:20px;font-weight:700">Manajemen Aspirasi</h2>
+</div>
+
+<div class="grid-3">
+    {% for asp in aspirations %}
+    <div class="aspiration-card">
+        <div class="asp-image" style="background:var(--primary-light);height:100px;display:flex;align-items:center;justify-content:center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line></svg>
+        </div>
+        <div class="asp-body">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+                <span class="badge badge-primary">{{ asp.category }}</span>
+            </div>
+            <p style="font-size:13px;color:var(--text-secondary);line-height:1.5">{{ asp.content[:120] }}{% if asp.content|length > 120 %}...{% endif %}</p>
+            <div style="font-size:12px;color:var(--text-tertiary);margin-top:6px">
+                {{ asp.user.full_name }} · {{ asp.created_at.strftime('%d %b %Y') }}
+            </div>
+        </div>
+        <div class="asp-actions" style="display:flex;justify-content:space-between;align-items:center">
+            <span style="font-size:13px;color:var(--text-secondary)">👍 {{ asp.likes_count }}</span>
+            <form method="POST" action="{{ url_for('delete_aspiration', aspiration_id=asp.id) }}" onsubmit="return confirm('Hapus aspirasi ini?')">
+                <button type="submit" class="btn btn-sm" style="color:var(--danger);background:var(--danger-light);border:none">Hapus</button>
+            </form>
+        </div>
+    </div>
+    {% endfor %}
+    {% if not aspirations %}
+    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-tertiary);">
+        Belum ada aspirasi.
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

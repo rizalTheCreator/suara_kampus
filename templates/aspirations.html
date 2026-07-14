@@ -1,111 +1,115 @@
 {% extends "base.html" %}
 
-{% block title %}Papan Aspirasi - Suara Kampus ITG{% endblock %}
+{% block title %}Aspirasi Mahasiswa — Suara Kampus{% endblock %}
+{% block page_title %}Aspirasi{% endblock %}
 
 {% block content %}
-<div class="page-header">
-    <div class="container">
-        <h1><i class="bi bi-megaphone me-2"></i>Papan Aspirasi Publik</h1>
-        <p>Sampaikan ide, kritik, dan harapan untuk perbaikan kampus</p>
-    </div>
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <h2 style="font-size:20px;font-weight:700">Aspirasi Mahasiswa</h2>
+    <button onclick="document.getElementById('modal-buat').classList.add('active');requestAnimationFrame(()=>document.getElementById('modal-buat').classList.add('visible'))" class="btn btn-primary btn-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+        Usulkan Aspirasi
+    </button>
 </div>
 
-<div class="container">
-    <!-- Create Aspiration -->
-    {% if current_user.is_authenticated and current_user.role == 'student' %}
-    <div class="card border-0 shadow-sm mb-4" style="border-radius: 16px;">
-        <div class="card-body p-4">
-            <h5 class="fw-bold mb-3"><i class="bi bi-pencil-square me-2 text-primary"></i>Tulis Aspirasi Baru</h5>
-            <form method="POST" action="{{ url_for('new_aspiration') }}">
-                <div class="mb-3">
-                    <textarea name="content" class="form-control" rows="3" placeholder="Bagikan ide atau harapanmu untuk kampus..." required></textarea>
-                </div>
-                <div class="d-flex justify-content-between align-items-center">
-                    <select name="category" class="form-control w-auto">
-                        <option value="">Pilih Kategori (Opsional)</option>
+<div class="filter-bar">
+    <a class="filter-chip {% if not sort_by %}active{% endif %}" href="{{ url_for('aspirations') }}">Semua</a>
+    <a class="filter-chip {% if sort_by == 'likes' %}active{% endif %}" href="{{ url_for('aspirations', sort='likes') }}">Terpopuler</a>
+    <a class="filter-chip {% if sort_by == 'newest' %}active{% endif %}" href="{{ url_for('aspirations', sort='newest') }}">Terbaru</a>
+</div>
+
+<div class="grid-3">
+    {% for asp in aspirations %}
+    <div class="aspiration-card">
+        <div class="asp-image" style="background:var(--primary-light);height:120px;display:flex;align-items:center;justify-content:center">
+            {% if asp.image_path %}
+            <img src="{{ url_for('static', filename=asp.image_path) }}" alt="Aspirasi" style="width:100%;height:100%;object-fit:cover">
+            {% else %}
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="16"></line><line x1="8" y1="12" x2="16" y2="12"></line></svg>
+            {% endif %}
+        </div>
+        <div class="asp-body">
+            <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+                <span class="badge badge-primary">{{ asp.category }}</span>
+            </div>
+            <h3 style="font-size:15px;font-weight:700;margin-bottom:6px;line-height:1.4">{{ asp.content[:100] }}{% if asp.content|length > 100 %}...{% endif %}</h3>
+            <div style="font-size:12px;color:var(--text-tertiary)">
+                oleh {{ asp.user.full_name }} · {{ asp.created_at.strftime('%d %b %Y') }}
+            </div>
+        </div>
+        <div class="asp-actions">
+            <span style="font-size:13px;color:var(--text-secondary)">👍 {{ asp.likes_count }} mendukung</span>
+            {% if current_user.is_authenticated %}
+            <form method="POST" action="{{ url_for('like_aspiration', aspiration_id=asp.id) }}" style="display:inline">
+                <button type="submit" class="btn btn-sm btn-outline" style="{% if asp.id in liked_ids %}background:var(--primary-light);color:var(--primary){% endif %}">
+                    {% if asp.id in liked_ids %}✓ Didukung{% else %}Dukung{% endif %}
+                </button>
+            </form>
+            {% endif %}
+        </div>
+    </div>
+    {% endfor %}
+    {% if not aspirations %}
+    <div style="grid-column: 1/-1; text-align: center; padding: 40px; color: var(--text-tertiary);">
+        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin:0 auto 12px;opacity:0.3;display:block"><circle cx="12" cy="12" r="10"></circle></svg>
+        Belum ada aspirasi. Jadilah yang pertama!
+    </div>
+    {% endif %}
+</div>
+
+<!-- Modal Buat Aspirasi -->
+<div id="modal-buat" class="modal-overlay">
+    <div class="modal-box" style="max-width:560px">
+        <div class="modal-header">
+            <div>
+                <h3 style="font-size:18px;font-weight:700">Usulkan Aspirasi</h3>
+                <p style="font-size:13px;color:var(--text-secondary);margin-top:4px">Bagikan ide dan usulan Anda untuk kampus yang lebih baik</p>
+            </div>
+            <button class="btn btn-ghost btn-icon" onclick="closeModal('modal-buat')">✕</button>
+        </div>
+        <div class="modal-body">
+            <form method="POST" action="{{ url_for('create_aspiration') }}">
+                <div class="form-group">
+                    <label class="form-label">Kategori <span style="color:var(--error)">*</span></label>
+                    <select name="category" class="form-input" required>
+                        <option value="" disabled selected>Pilih kategori...</option>
+                        <option value="Infrastruktur">Infrastruktur</option>
                         <option value="Fasilitas">Fasilitas</option>
-                        <option value="Layanan">Layanan</option>
                         <option value="Akademik">Akademik</option>
+                        <option value="Keamanan">Keamanan</option>
+                        <option value="Lingkungan">Lingkungan</option>
                         <option value="Lainnya">Lainnya</option>
                     </select>
-                    <button type="submit" class="btn btn-primary-custom">
-                        <i class="bi bi-send me-2"></i>Kirim Aspirasi
-                    </button>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Aspirasi / Ide Anda <span style="color:var(--error)">*</span></label>
+                    <textarea name="content" class="form-input" rows="4" placeholder="Tulis aspirasi Anda secara jelas dan rinci. Jelaskan manfaatnya untuk komunitas kampus..." required minlength="20"></textarea>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Tag (opsional)</label>
+                    <input type="text" name="tags" class="form-input" placeholder="Contoh: wifi, perpustakaan, laboratorium">
+                    <p style="font-size:11px;color:var(--text-tertiary);margin-top:4px">Pisahkan dengan koma</p>
+                </div>
+                <div class="modal-footer" style="padding:0;margin-top:20px">
+                    <button type="button" class="btn btn-outline" onclick="closeModal('modal-buat')">Batal</button>
+                    <button type="submit" class="btn btn-primary">Kirim Aspirasi</button>
                 </div>
             </form>
         </div>
     </div>
-    {% endif %}
-
-    <!-- Sort Tabs -->
-    <div class="d-flex justify-content-between align-items-center mb-4">
-        <div class="btn-group">
-            <a href="{{ url_for('aspirations', sort='popular') }}" class="btn btn-outline-primary {% if sort == 'popular' %}active{% endif %}">
-                <i class="bi bi-fire me-1"></i>Terpopuler
-            </a>
-            <a href="{{ url_for('aspirations', sort='newest') }}" class="btn btn-outline-primary {% if sort == 'newest' %}active{% endif %}">
-                <i class="bi bi-clock me-1"></i>Terbaru
-            </a>
-        </div>
-        <span class="text-muted small">{{ aspirations|length }} aspirasi</span>
-    </div>
-
-    <!-- Aspirations List -->
-    <div class="row">
-        {% for asp in aspirations %}
-        <div class="col-lg-6 mb-3">
-            <div class="card border-0 shadow-sm" style="border-radius: 12px; border-left: 4px solid var(--secondary) !important;">
-                <div class="card-body p-4">
-                    <div class="d-flex justify-content-between align-items-start mb-2">
-                        {% if asp.category %}
-                        <span class="badge bg-light text-dark border">{{ asp.category }}</span>
-                        {% else %}
-                        <span class="badge bg-light text-dark border">Umum</span>
-                        {% endif %}
-                        <small class="text-muted">{{ asp.created_at.strftime('%d/%m/%Y') }}</small>
-                    </div>
-                    <p class="mb-3">{{ asp.content }}</p>
-                    <div class="d-flex align-items-center justify-content-between">
-                        <div class="d-flex gap-2">
-                            {% if current_user.is_authenticated %}
-                            <form method="POST" action="{{ url_for('vote_aspiration', aspiration_id=asp.id) }}" class="d-inline">
-                                <input type="hidden" name="vote_type" value="like">
-                                <button type="submit" class="vote-btn like">
-                                    <i class="bi bi-hand-thumbs-up me-1"></i>{{ asp.likes_count }}
-                                </button>
-                            </form>
-                            <form method="POST" action="{{ url_for('vote_aspiration', aspiration_id=asp.id) }}" class="d-inline">
-                                <input type="hidden" name="vote_type" value="dislike">
-                                <button type="submit" class="vote-btn dislike">
-                                    <i class="bi bi-hand-thumbs-down me-1"></i>{{ asp.dislikes_count }}
-                                </button>
-                            </form>
-                            {% else %}
-                            <span class="vote-btn"><i class="bi bi-hand-thumbs-up me-1"></i>{{ asp.likes_count }}</span>
-                            <span class="vote-btn"><i class="bi bi-hand-thumbs-down me-1"></i>{{ asp.dislikes_count }}</span>
-                            {% endif %}
-                        </div>
-                        <span class="text-muted small"><i class="bi bi-person me-1"></i>Anonim</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-        {% else %}
-        <div class="col-12 text-center py-5">
-            <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
-            <p class="text-muted mt-3">Belum ada aspirasi. Jadilah yang pertama!</p>
-        </div>
-        {% endfor %}
-    </div>
 </div>
+{% endblock %}
 
-<style>
-    .vote-btn {
-        border: none; background: transparent; color: var(--text-secondary);
-        font-weight: 600; padding: 0.25rem 0.75rem; border-radius: 6px;
-        transition: all 0.2s; cursor: pointer;
+{% block scripts %}
+<script>
+    function closeModal(id) {
+        const m = document.getElementById(id);
+        if (!m) return;
+        m.classList.remove('visible');
+        setTimeout(() => m.classList.remove('active'), 250);
     }
-    .vote-btn:hover.like { color: var(--success); background: rgba(40,167,69,0.1); }
-    .vote-btn:hover.dislike { color: var(--danger); background: rgba(220,53,69,0.1); }
-</style>
+    document.addEventListener('click', e => {
+        if (e.target.classList.contains('modal-overlay')) closeModal(e.target.id);
+    });
+</script>
 {% endblock %}

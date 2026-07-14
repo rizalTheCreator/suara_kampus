@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Data Mahasiswa — Admin Suara Kampus{% endblock %}
+{% block page_title %}Data Mahasiswa{% endblock %}
+
+{% block content %}
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:12px">
+    <h2 style="font-size:20px;font-weight:700">Data Mahasiswa</h2>
+    <form method="GET" action="{{ url_for('admin_users') }}">
+        <input type="text" name="q" placeholder="Cari mahasiswa..." value="{{ request.args.get('q','') }}" class="form-input" style="width:220px;padding:8px 14px">
+    </form>
+</div>
+
+<div class="card">
+    <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse">
+            <thead>
+                <tr style="border-bottom:2px solid var(--border)">
+                    <th style="padding:12px 16px;text-align:left;font-size:12px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase">Mahasiswa</th>
+                    <th style="padding:12px 16px;text-align:left;font-size:12px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase">NIM</th>
+                    <th style="padding:12px 16px;text-align:left;font-size:12px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase">Laporan</th>
+                    <th style="padding:12px 16px;text-align:left;font-size:12px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase">Bergabung</th>
+                    <th style="padding:12px 16px;text-align:left;font-size:12px;font-weight:700;color:var(--text-tertiary);text-transform:uppercase">Aksi</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr style="border-bottom:1px solid var(--border-light);transition:background 0.15s" onmouseover="this.style.background='var(--bg-secondary)'" onmouseout="this.style.background=''">
+                    <td style="padding:14px 16px">
+                        <div style="display:flex;align-items:center;gap:12px">
+                            <div style="width:38px;height:38px;border-radius:50%;background:var(--primary);color:white;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px">
+                                {{ user.full_name[0]|upper }}
+                            </div>
+                            <div>
+                                <div style="font-size:14px;font-weight:600">{{ user.full_name }}</div>
+                                <div style="font-size:12px;color:var(--text-tertiary)">{{ user.email or '-' }}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="padding:14px 16px;font-size:14px;color:var(--text-secondary)">{{ user.nim }}</td>
+                    <td style="padding:14px 16px">
+                        <span class="badge badge-primary">{{ user.reports|length }} laporan</span>
+                    </td>
+                    <td style="padding:14px 16px;font-size:13px;color:var(--text-tertiary)">{{ user.created_at.strftime('%d %b %Y') if user.created_at else '-' }}</td>
+                    <td style="padding:14px 16px">
+                        <div style="display:flex;gap:6px">
+                            <form method="POST" action="{{ url_for('toggle_user_active', user_id=user.id) }}">
+                                <button type="submit" class="btn btn-sm {% if user.is_active %}btn-outline{% else %}btn-primary{% endif %}">
+                                    {% if user.is_active %}Nonaktifkan{% else %}Aktifkan{% endif %}
+                                </button>
+                            </form>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+                {% if not users %}
+                <tr><td colspan="5" style="padding:40px;text-align:center;color:var(--text-tertiary)">Tidak ada mahasiswa ditemukan.</td></tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
